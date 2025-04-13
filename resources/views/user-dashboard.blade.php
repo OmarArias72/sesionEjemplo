@@ -74,10 +74,10 @@
             <h1>Mi Perfil</h1>
             <div class="profile-card">
               <h2>Información Personal</h2>
-              <p><strong>Nombre:</strong> Juan Pérez García</p>
-              <p><strong>Correo Electrónico:</strong> juan.perez@ejemplo.com</p>
-              <p><strong>Teléfono:</strong> +34 612 345 678</p>
-              <p><strong>Fecha de Nacimiento:</strong> 15/05/1985</p>
+              <p><strong>Nombre:</strong> {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}</p>
+              <p><strong>Correo Electrónico:</strong> {{ Auth::user()->email }}</p>
+              <p><strong>Teléfono:</strong> {{ Auth::user()->telefono }}</p>
+              {{-- <p><strong>Fecha de Nacimiento:</strong> 15/05/1985</p> --}}
             </div>
             <div class="profile-card">
               <h2>Dirección de Facturación</h2>
