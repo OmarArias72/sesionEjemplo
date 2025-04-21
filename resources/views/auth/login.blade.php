@@ -65,20 +65,20 @@
                             </div>
                         </div>
 
-                        <div class="form-group mt-2">
+                        {{-- <div class="form-group mt-2">
                             <label class="inline-flex items-center">
                                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                                 <span class="ml-2 text-sm text-gray-600">Recordarme</span>
                             </label>
-                        </div>
+                        </div> --}}
 
                         <button type="submit" class="btn btn-primary btn-block mt-4">Iniciar Sesión</button>
                     </form>
                     
                     <div class="auth-footer mt-4">
-                        @if (Route::has('password.request'))
+                        {{-- @if (Route::has('password.request'))
                             <p><a class="text-sm text-blue-600 hover:underline" href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a></p>
-                        @endif
+                        @endif --}}
 
                         <p>¿No tienes una cuenta? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Regístrate</a></p>
                     </div>

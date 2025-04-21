@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 
@@ -8,9 +10,9 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -18,18 +20,39 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route::middleware(['auth', 'role:administrador'])->prefix('admin')->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('admin-dashboard');
+//     })->name('admin-dashboard');
+// });
 // Panel de ADMINISTRADOR
-Route::middleware(['auth', CheckRole::class . ':administrador'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin-dashboard');
-    })->name('admin-dashboard');
-});
+Route::middleware(['auth', 'role:administrador'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [AdministradorController::class,'getViewDashboard'])->name('dashboard-admin'); // admin.dashboard
 
+        Route::get('/envios', [AdministradorController::class,'getViewEnvios'])->name('envios');
+
+        Route::get('/productos', [AdministradorController::class,'getViewProductos'])->name('productos');
+
+        Route::get('/pagos', [AdministradorController::class,'getViewPagos'])->name('pagos');
+
+        Route::get('/pedidos', [AdministradorController::class,'getPedidos'])->name('pedidos');
+
+        Route::get('/configuracion', [AdministradorController::class,'getViewConfiguracion'])->name('configuracion');
+    });
 // Panel de USUARIO ESTÁNDAR
-Route::middleware(['auth', CheckRole::class . ':usuario_estandar'])->group(function () {
-    Route::get('/user/dashboard', function () {
-        return view('user-dashboard');
-    })->name('user-dashboard');
-});
+Route::middleware(['auth','role:usuario_estandar'])
+    ->prefix('user')
+    ->name('user.')
+    ->group(function () {
+        Route::get('/dashboard', [UsuarioController::class,'getViewMiPerfil'])->name('dashboard-usuario'); // user.dashboard
 
+        Route::get('/editar-perfil', [UsuarioController::class, 'getEditarPerfil'])->name('perfil');
+
+        Route::get('/editar-direccion', [UsuarioController::class, 'getEditarDireccion'])->name('direccion');
+
+        Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
+    });
 require __DIR__.'/auth.php';

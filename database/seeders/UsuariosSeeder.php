@@ -15,7 +15,7 @@ class UsuariosSeeder extends Seeder
     public function run(): void
     {
         DB::table('Usuarios')->updateOrInsert([
-            'id_cliente' => 1,
+            'id_usuario' => 1,
             'id_rol' => 1, // Rol de administrador
             'nombre' => 'Carlos',
             'apellido' => 'Pérez',
@@ -27,7 +27,7 @@ class UsuariosSeeder extends Seeder
         DB::table('Usuarios')->updateOrInsert(
             ['email' => 'usuario@ejemplo.com'], // condición para evitar duplicados
             [
-                'id_cliente' => 2,
+                'id_usuario' => 2,
                 'id_rol' => 2,
                 'nombre' => 'Lucía',
                 'apellido' => 'Gómez',

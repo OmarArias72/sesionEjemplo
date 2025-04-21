@@ -46,18 +46,22 @@
         <div class="profile-layout">
           <!-- Sidebar de Cliente -->
           <aside class="client-sidebar">
-            <button onclick="location.href='perfil-usuario.html'">
+            {{-- <button href="{{route('user.dashboard-usuario')}}">
               <i class="fas fa-user"></i> Mi Perfil
-            </button>
-            <button onclick="location.href='editar-perfil.html'">
-              <i class="fas fa-edit"></i> Editar Perfil
-            </button>
-            <button onclick="location.href='editar-direccion.html'">
-              <i class="fas fa-map-marker-alt"></i> Editar Dirección
-            </button>
-            <button onclick="location.href='mis-pedidos.html'">
-              <i class="fas fa-box"></i> Ver Mis Pedidos
-            </button>
+            </button> --}}
+            <a href="{{ route('user.dashboard-usuario') }}" class="btn btn-primary">
+              <i class="fas fa-user"></i> Mi Perfil
+            </a>
+            <a href="{{ route('user.perfil') }}" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Editar perfil
+            </a>
+            <a href="{{ route('user.direccion') }}" class="btn btn-primary">
+              <i class="fas fa-map-marker-alt"></i> Editar direccion
+            </a>
+            <a href="{{ route('user.pedidos') }}" class="btn btn-primary">
+              <i class="fas fa-box"></i> Mis pedidos
+            </a>
+            
             <form method="POST" action="{{ route('logout') }}" id="logout-form">
               @csrf
               <button type="submit" class="logout-button">

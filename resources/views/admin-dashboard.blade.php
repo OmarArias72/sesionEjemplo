@@ -18,37 +18,37 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li class="active">
-                        <a href="admin.html">
+                        <a href="{{route('admin.dashboard-admin')}}">
                             <i class="fas fa-chart-bar"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a href="admin-productos.html">
+                        <a href="{{route('admin.productos')}}">
                             <i class="fas fa-shopping-bag"></i>
                             <span>Productos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="admin-pedidos.html">
+                        <a href="{{route('admin.pedidos')}}">
                             <i class="fas fa-box"></i>
                             <span>Pedidos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="admin-gestion-envios.html">
+                        <a href="{{route('admin.envios')}}">
                             <i class="fas fa-truck"></i>
                             <span>Envíos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="admin-pagos.html">
+                        <a href="{{route('admin.pagos')}}">
                             <i class="fas fa-credit-card"></i>
                             <span>Pagos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="admin-configuracion.html">
+                        <a href="{{route('admin.configuracion')}}">
                             <i class="fas fa-cog"></i>
                             <span>Configuración</span>
                         </a>

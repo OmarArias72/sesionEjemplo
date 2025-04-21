@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -22,29 +23,34 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(Request $request)
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-    
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return back()->withErrors([
-                'email' => 'Las credenciales no coinciden con nuestros registros.',
-            ])->onlyInput('email');
-        }
-    
+        $request->authenticate();
+
         $request->session()->regenerate();
-    
-        // Redirección según el rol
+
+        // Obtener el usuario autenticado
         $user = Auth::user();
-    
-        if ($user->id_rol == 1) { // administrador
-            return redirect()->intended('/admin/dashboard');
-        } else {
-            return redirect()->intended('/user/dashboard');
+
+        Log::info('Usuario autenticado:', [
+            'id' => $user->id_usuario,
+            'nombre' => $user->nombre,
+            'rol' => $user->rol->tipo_rol]);
+         // Depuración
+        // if (!Auth::check()) {
+        //     Log::info('La autenticacion fallo:', [
+        //         'id' => $user->id,
+        //         'nombre' => $user->nombre,
+        //         'rol' => $user->rol->tipo_rol]);
+        //     return back()->withErrors(['email' => 'Authentication failed']);
+        // }
+        
+        // Redirigir al panel de inventario por defecto (accesible para todos)
+        if($user->rol->tipo_rol=="administrador"){
+            return redirect()->route('admin.dashboard-admin');
         }
+        Log::info("Redirigiendo a user.dashboard");
+        return redirect()->route('user.dashboard-usuario');
     }
 
     /**

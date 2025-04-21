@@ -21,7 +21,7 @@
                 
                 <nav class="nav-menu">
                     <ul>
-                        <li><a href="carrito.html"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                        <li><a><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
                         <li><a href="{{route('login')}}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
                     </ul>
                 </nav>

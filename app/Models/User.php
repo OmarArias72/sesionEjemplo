@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'usuarios'; // importante
-    protected $primaryKey = 'id_cliente'; // clave primaria personalizada
+    protected $primaryKey = 'id_usuario'; // clave primaria personalizada
 
     public $timestamps = false; // si no usas created_at y updated_at
 
@@ -58,5 +58,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function getAuthIdentifierName()
+    {
+        return 'id_usuario';
     }
 }
