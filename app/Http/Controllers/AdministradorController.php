@@ -28,4 +28,6 @@ class AdministradorController extends Controller
         return view("admin-gestion-envios");
     }
 
+    
+
 }
