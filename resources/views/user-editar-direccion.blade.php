@@ -74,63 +74,75 @@
           <!-- Formulario de edición de dirección -->
           <div class="profile-edit">
             <h1>Editar Dirección</h1>
-            <form action="procesar_direccion.php" method="POST">
+            <form action="{{ route('user.direccion-actualizar') }}" method="POST">
+              @csrf
+              @method("PUT")
+              
               <label for="calle">Calle:</label>
               <input
-                type="text"
-                id="calle"
-                name="calle"
-                value={{ Auth::user()->direccion->calle}}
-                required
+                  type="text"
+                  id="calle"
+                  name="calle"
+                  value="{{ Auth::user()->direccion->calle ?? old('calle', '') }}"
+                  required
               />
-
+          
               <label for="colonia">Colonia:</label>
               <input
-                type="text"
-                id="colonia"
-                name="colonia"
-                value={{Auth::user()->direccion->colonia}}
-                required
+                  type="text"
+                  id="colonia"
+                  name="colonia"
+                  value="{{ Auth::user()->direccion->colonia ?? old('colonia', '') }}"
+                  required
               />
-
-              <label for="numeroExterior">Numero exterior:</label>
+          
+              <label for="numeroExterior">Número exterior:</label>
               <input
-                type="text"
-                id=numeroExterior
-                name=numeroExterior
-                value={{Auth::user()->direccion->numeroExterior}}
-                required
+                  type="text"
+                  id="numeroExterior"
+                  name="numeroExterior"
+                  value="{{ Auth::user()->direccion->numeroExterior ?? old('numeroExterior', '') }}"
+                  required
               />
-
+          
               <label for="ciudad">Ciudad:</label>
               <input
-                type="text"
-                id="ciudad"
-                name="ciudad"
-                value={{Auth::user()->direccion->ciudad}}
-                required
+                  type="text"
+                  id="ciudad"
+                  name="ciudad"
+                  value="{{ Auth::user()->direccion->ciudad ?? old('ciudad', '') }}"
+                  required
               />
-
+          
               <label for="codigo_postal">Código Postal:</label>
               <input
-                type="text"
-                id="codigo_postal"
-                name="codigo_postal"
-                value={{Auth::user()->direccion->codigoPostal}}
-                required
+                  type="text"
+                  id="codigo_postal"
+                  name="codigoPostal"
+                  value="{{ Auth::user()->direccion->codigoPostal ?? old('codigoPostal', '') }}"
+                  required
               />
-
+          
+              <label for="estado">Estado:</label>
+              <input
+                  type="text"
+                  id="estado"
+                  name="estado"
+                  value="{{ Auth::user()->direccion->estado ?? old('estado', '') }}"
+                  required
+              />
+          
               <label for="pais">País:</label>
               <input
-                type="text"
-                id="pais"
-                name="pais"
-                value={{Auth::user()->direccion->pais}}
-                required
+                  type="text"
+                  id="pais"
+                  name="pais"
+                  value="{{ Auth::user()->direccion->pais ?? old('pais', '') }}"
+                  required
               />
-
+          
               <button type="submit">Guardar Cambios</button>
-            </form>
+          </form>
           </div>
         </div>
       </div>

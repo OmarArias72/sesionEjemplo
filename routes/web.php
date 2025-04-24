@@ -65,7 +65,11 @@ Route::middleware(['auth','role:usuario_estandar'])
 
         Route::get('/editar-perfil', [UsuarioController::class, 'getEditarPerfil'])->name('perfil');
 
+        Route::put("actualizar-perfil",[UsuarioController::class,'updatePerfil'])->name("perfil-actualizar");
+
         Route::get('/editar-direccion', [UsuarioController::class, 'getEditarDireccion'])->name('direccion');
+
+        Route::put("actualizar-direccion",[UsuarioController::class,'updateDireccion'])->name("direccion-actualizar");
 
         Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
     });

@@ -75,7 +75,9 @@
           <!-- Formulario de edición de perfil -->
           <div class="profile-edit">
             <h1>Editar Perfil</h1>
-            <form action="procesar_perfil.php" method="POST">
+            <form action="{{route('user.perfil-actualizar')}}" method="POST">
+              @csrf
+              @method("PUT")
               <label for="nombre">Nombre:</label>
               <input
                 type="text"

@@ -84,13 +84,23 @@
               {{-- <p><strong>Fecha de Nacimiento:</strong> 15/05/1985</p> --}}
             </div>
             <div class="profile-card">
-              <h2>Dirección de Entrega</h2>
-              <p><strong>Dirección:</strong> {{ Auth::user()->direccion->calle }} {{ Auth::user()->direccion->numeroExterior }}</p>
-              <p><strong>Colonia:</strong> {{Auth::user()->direccion->colonia}}</p>
-              <p><strong>Ciudad:</strong> {{Auth::user()->direccion->ciudad}}</p>
-              <p><strong>Código Postal:</strong> {{Auth::user()->direccion->codigoPostal}}</p>
-              <p><strong>Estado:</strong> {{Auth::user()->direccion->estado}}</p>
-              <p><strong>País:</strong> {{Auth::user()->direccion->pais}}</p>
+                <h2>Dirección de Entrega</h2>
+                @if(Auth::user()->direccion)
+                    <p><strong>Dirección:</strong> 
+                        {{ Auth::user()->direccion->calle ?? 'No especificada' }} 
+                        {{ Auth::user()->direccion->numeroExterior ?? '' }}
+                    </p>
+                    <p><strong>Colonia:</strong> {{ Auth::user()->direccion->colonia ?? 'No especificada' }}</p>
+                    <p><strong>Ciudad:</strong> {{ Auth::user()->direccion->ciudad ?? 'No especificada' }}</p>
+                    <p><strong>Código Postal:</strong> {{ Auth::user()->direccion->codigoPostal ?? 'No especificado' }}</p>
+                    <p><strong>Estado:</strong> {{ Auth::user()->direccion->estado ?? 'No especificado' }}</p>
+                    <p><strong>País:</strong> {{ Auth::user()->direccion->pais ?? 'No especificado' }}</p>
+                @else
+                    <p class="text-warning">No has registrado una dirección de entrega</p>
+                    <a href="{{ route('user.direccion') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Agregar dirección
+                    </a>
+                @endif
             </div>
           </div>
         </div>
