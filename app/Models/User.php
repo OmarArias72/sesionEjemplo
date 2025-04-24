@@ -46,6 +46,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Rol::class, 'id_rol');
     }
+    public function direccion(){
+        return $this->hasOne(Direccion::class,"id_usuario");
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -12,7 +12,7 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">TiendaOnline</a>
+                <a href="{{route('home')}}" class="logo">TiendaOnline</a>
                 
                 <div class="search-bar">
                     <input type="text" placeholder="Buscar productos...">
@@ -22,7 +22,15 @@
                 <nav class="nav-menu">
                     <ul>
                         <li><a><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
-                        <li><a href="{{route('login')}}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @auth
+                            <li>
+                                <a href="{{ route('user.dashboard-usuario') }}" class="active">
+                                    <i class="fas fa-user"></i> Mi Cuenta
+                                </a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @endauth
                     </ul>
                 </nav>
             </div>

@@ -81,7 +81,16 @@
                 type="text"
                 id="nombre"
                 name="nombre"
-                value="Juan Pérez García"
+                value="{{Auth::user()->nombre}}"
+                required
+              />
+
+              <label for="apellido">Apellido:</label>
+              <input
+                type="text"
+                id="apellido"
+                name="apellido"
+                value="{{Auth::user()->apellido}}"
                 required
               />
 
@@ -90,7 +99,7 @@
                 type="email"
                 id="email"
                 name="email"
-                value="juan.perez@ejemplo.com"
+                value="{{Auth::user()->email}}"
                 required
               />
 
@@ -99,18 +108,18 @@
                 type="text"
                 id="telefono"
                 name="telefono"
-                value="+34 612 345 678"
+                value="{{Auth::user()->telefono}}"
                 required
               />
 
-              <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+              {{-- <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
               <input
                 type="date"
                 id="fecha_nacimiento"
                 name="fecha_nacimiento"
                 value="1985-05-15"
                 required
-              />
+              /> --}}
 
               <button type="submit">Guardar Cambios</button>
             </form>

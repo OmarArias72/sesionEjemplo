@@ -75,12 +75,30 @@
           <div class="profile-edit">
             <h1>Editar Dirección</h1>
             <form action="procesar_direccion.php" method="POST">
-              <label for="direccion">Dirección:</label>
+              <label for="calle">Calle:</label>
               <input
                 type="text"
-                id="direccion"
-                name="direccion"
-                value="Calle Principal 123, Piso 4B"
+                id="calle"
+                name="calle"
+                value={{ Auth::user()->direccion->calle}}
+                required
+              />
+
+              <label for="colonia">Colonia:</label>
+              <input
+                type="text"
+                id="colonia"
+                name="colonia"
+                value={{Auth::user()->direccion->colonia}}
+                required
+              />
+
+              <label for="numeroExterior">Numero exterior:</label>
+              <input
+                type="text"
+                id=numeroExterior
+                name=numeroExterior
+                value={{Auth::user()->direccion->numeroExterior}}
                 required
               />
 
@@ -89,7 +107,7 @@
                 type="text"
                 id="ciudad"
                 name="ciudad"
-                value="Madrid"
+                value={{Auth::user()->direccion->ciudad}}
                 required
               />
 
@@ -98,7 +116,7 @@
                 type="text"
                 id="codigo_postal"
                 name="codigo_postal"
-                value="28001"
+                value={{Auth::user()->direccion->codigoPostal}}
                 required
               />
 
@@ -107,7 +125,7 @@
                 type="text"
                 id="pais"
                 name="pais"
-                value="España"
+                value={{Auth::user()->direccion->pais}}
                 required
               />
 

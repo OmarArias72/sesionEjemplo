@@ -15,7 +15,7 @@
     <header class="header">
       <div class="container">
         <div class="header-content">
-          <a href="index.html" class="logo">TiendaOnline</a>
+          <a href="{{route('home')}}" class="logo">TiendaOnline</a>
 
           <div class="search-bar">
             <input type="text" placeholder="Buscar productos..." />
@@ -30,7 +30,7 @@
                 >
               </li>
               <li>
-                <a href="perfil-usuario.html" class="active"
+                <a href="{{ route('user.dashboard-usuario') }}" class="active"
                   ><i class="fas fa-user"></i> Mi Cuenta</a
                 >
               </li>
@@ -84,11 +84,13 @@
               {{-- <p><strong>Fecha de Nacimiento:</strong> 15/05/1985</p> --}}
             </div>
             <div class="profile-card">
-              <h2>Dirección de Facturación</h2>
-              <p><strong>Dirección:</strong> Calle Principal 123, Piso 4B</p>
-              <p><strong>Ciudad:</strong> Madrid</p>
-              <p><strong>Código Postal:</strong> 28001</p>
-              <p><strong>País:</strong> España</p>
+              <h2>Dirección de Entrega</h2>
+              <p><strong>Dirección:</strong> {{ Auth::user()->direccion->calle }} {{ Auth::user()->direccion->numeroExterior }}</p>
+              <p><strong>Colonia:</strong> {{Auth::user()->direccion->colonia}}</p>
+              <p><strong>Ciudad:</strong> {{Auth::user()->direccion->ciudad}}</p>
+              <p><strong>Código Postal:</strong> {{Auth::user()->direccion->codigoPostal}}</p>
+              <p><strong>Estado:</strong> {{Auth::user()->direccion->estado}}</p>
+              <p><strong>País:</strong> {{Auth::user()->direccion->pais}}</p>
             </div>
           </div>
         </div>
