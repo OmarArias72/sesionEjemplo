@@ -39,16 +39,22 @@ Route::middleware(['auth', 'role:administrador'])
         //VISTAS CATEGORIAS
         Route::get('/categorias', [CategoriaController::class,'createCategoriaView'])->name('categorias');
 
-        Route::post('/crear-categorias', [CategoriaController::class,'createCategoriaView'])->name('categorias-crear');
+        Route::post('/crear-categorias', [CategoriaController::class,'store'])->name('categorias-crear');
         //VISTAS PARA PRODUCTOS
 
         Route::get('/productos', [AdministradorController::class,'getViewProductos'])->name('productos');
 
         Route::get('/crear-productos', [ProductoController::class,'getViewCrearProductos'])->name('productos.crear');
 
-        Route::post('/registrar-productos', [ProductoController::class,'storeOrUpdate'])->name('productos.registrar');
+        Route::post('/registrar-productos', [ProductoController::class,'store'])->name('productos.registrar');
 
-        Route::get('/busqueda-productos', [ProductoController::class,'searchProducto'])->name('productos.buscar');
+        Route::get('/productos/editar',[ProductoController::class,'createEditView'])->name("editar-producto");
+
+        Route::put('/productos/producto/actualizar',[ProductoController::class,'update'])->name("actualizar-producto");
+
+        Route::get("/buscar/producto",[ProductoController::class,"buscarProductoEditForm"])->name("buscar-producto");
+
+        //RUTAS PARA PAGOS
 
         Route::get('/pagos', [AdministradorController::class,'getViewPagos'])->name('pagos');
 

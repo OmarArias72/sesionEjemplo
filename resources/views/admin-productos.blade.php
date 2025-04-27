@@ -100,6 +100,10 @@
                         <i class="fas fa-plus"></i> Añadir Producto
                     </button>
 
+                    <button class="btn btn-primary" data-url="{{ route('admin.editar-producto') }}">
+                        <i class="fas fa-plus"></i> Editar Producto
+                    </button>
+
                     <button class="btn btn-primary" data-url="{{ route('admin.categorias') }}">
                         <i class="fas fa-plus"></i> Añadir categoria
                     </button>
