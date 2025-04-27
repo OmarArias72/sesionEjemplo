@@ -131,7 +131,9 @@
                 </div>
                 
                 <div class="admin-card">
-                    <iframe id="admin-iframe"></iframe>
+                    <iframe id="admin-iframe" src="{{ route('admin.productos.tabla') }}">
+                        
+                    </iframe>
                 </div>
             </main>
         </div>

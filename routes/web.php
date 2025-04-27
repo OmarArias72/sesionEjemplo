@@ -43,6 +43,7 @@ Route::middleware(['auth', 'role:administrador'])
         //VISTAS PARA PRODUCTOS
 
         Route::get('/productos', [AdministradorController::class,'getViewProductos'])->name('productos');
+        Route::get('/admin/productos/tabla', [AdministradorController::class, 'tablaProductos'])->name('productos.tabla');
 
         Route::get('/crear-productos', [ProductoController::class,'getViewCrearProductos'])->name('productos.crear');
 

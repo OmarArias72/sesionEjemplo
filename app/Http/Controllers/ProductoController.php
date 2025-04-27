@@ -146,7 +146,7 @@ class ProductoController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Error al actualizar producto: " . $e->getMessage());
+            Log::info("Error al actualizar producto: " . $e->getMessage());
             return redirect()->back()->with('error', 'Error al actualizar el producto.');
         }
     }
