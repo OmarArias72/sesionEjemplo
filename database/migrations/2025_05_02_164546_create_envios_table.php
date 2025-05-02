@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('envios', function (Blueprint $table) {
             $table->id('id_envio');
             $table->string("estado",100);
-            $table->string("codigoSeguimiento");
-            $table->timestamp("fechaEnvio");
-            $table->timestamp("fechaEstimadaEntrega");
-            $table->timestamp("fechaEntrega");
+            $table->string("codigoSeguimiento")->nullable();
+            $table->timestamp("fechaEnvio")->nullable();
+            $table->timestamp("fechaEstimadaEntrega")->nullable();
+            $table->timestamp("fechaEntrega")->nullable();
             $table->timestamps();
         });
     }

@@ -23,4 +23,9 @@ class Direccion extends Model
     public function usuario(){
         return $this->belongsTo(User::class,"id_usuario");
     }
+    // Relación con pedidos
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'id_direccion');
+    }
 }

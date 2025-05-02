@@ -14,4 +14,10 @@ class Empresa extends Model
         "numeroContacto",
         "correo"
     ];
+
+    // Relación con envíos
+    public function envios()
+    {
+        return $this->hasMany(Envio::class, 'id_empresa');
+    }
 }

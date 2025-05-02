@@ -50,6 +50,18 @@ class User extends Authenticatable
         return $this->hasOne(Direccion::class,"id_usuario");
     }
 
+    // Relación con pedidos
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class, 'id_usuario');
+    }
+
+    // Relación con carrito (uno a uno)
+    public function carrito()
+    {
+        return $this->hasOne(Carrito::class, 'id_usuario');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
