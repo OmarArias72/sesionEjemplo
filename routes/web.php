@@ -61,7 +61,14 @@ Route::middleware(['auth', 'role:administrador'])
 
         Route::get('/pedidos', [AdministradorController::class,'getPedidos'])->name('pedidos');
 
+        //RUTAS PARA LA CONFIGURACION
         Route::get('/configuracion', [AdministradorController::class,'getViewConfiguracion'])->name('configuracion');
+
+        Route::post('/configuracion', [AdministradorController::class, 'store'])->name('configuracion.store');
+        Route::put('/configuracion/{id}', [AdministradorController::class, 'update'])->name('configuracion.update');
+    
+        Route::post('/configuracion/iva', [AdministradorController::class, 'storeIva'])->name('configuracion.iva.store');
+        Route::put('/configuracion/iva/{id}', [AdministradorController::class, 'updateIva'])->name('configuracion.iva.update');
     });
 // Panel de USUARIO ESTÁNDAR
 Route::middleware(['auth','role:usuario_estandar'])

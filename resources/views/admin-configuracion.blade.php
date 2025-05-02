@@ -118,29 +118,40 @@
             <!-- Métodos de Pago -->
             <div class="settings-section" id="payment">
               <h2>Configuración de PayPal</h2>
-              <form id="paypal-config-form" class="settings-form">
-                <div class="form-group">
-                  <label for="paypal-email">Correo de Cuenta PayPal</label>
-                  <input type="email" id="paypal-email" name="paypal-email" placeholder="ejemplo@negocio.com" required />
-                </div>
-                <div class="form-group">
-                  <label for="paypal-name">Nombre del Titular (opcional)</label>
-                  <input type="text" id="paypal-name" name="paypal-name" placeholder="Nombre del titular de la cuenta" />
-                </div>
-                <div class="form-group">
-                  <label for="paypal-mode">Modo de Integración</label>
-                  <select id="paypal-mode" name="paypal-mode">
-                    <option value="live">Producción</option>
-                    <option value="sandbox">Sandbox (Pruebas)</option>
-                  </select>
-                </div>
-                <div class="form-actions">
-                  <button type="submit" class="btn btn-primary">Guardar Configuración</button>
-                  <button type="reset" class="btn btn-secondary">Cancelar</button>
-                </div>
+              <form id="paypal-config-form" class="settings-form" 
+                    action="{{ isset($paypalConfig) ? route('admin.configuracion.update', $paypalConfig->id_configuracion) : route('admin.configuracion.store') }}" 
+                    method="POST">
+                  @csrf
+                  @if(isset($paypalConfig))
+                      @method('PUT')
+                  @endif
+                  
+                  <div class="form-group">
+                      <label for="paypal-email">Correo de Cuenta PayPal</label>
+                      <input type="email" id="paypal-email" name="paypal-email" 
+                            value="{{ $paypalConfig->correo ?? old('paypal-email') }}" 
+                            placeholder="ejemplo@negocio.com" required />
+                  </div>
+                  <div class="form-group">
+                      <label for="paypal-name">Nombre del Titular</label>
+                      <input type="text" id="paypal-name" name="paypal-name" 
+                            value="{{ $paypalConfig->nombreTitular ?? old('paypal-name') }}" 
+                            placeholder="Nombre del titular de la cuenta" />
+                  </div>
+                  {{-- <div class="form-group">
+                      <label for="paypal-mode">Modo de Integración</label>
+                      <select id="paypal-mode" name="paypal-mode">
+                          <option value="live" {{ (isset($paypalConfig) && $paypalConfig->modo == 'live') ? 'selected' : '' }}>Producción</option>
+                          <option value="sandbox" {{ (isset($paypalConfig) && $paypalConfig->modo == 'sandbox') ? 'selected' : '' }}>Sandbox (Pruebas)</option>
+                      </select>
+                  </div> --}}
+                  <div class="form-actions">
+                      <button type="submit" class="btn btn-primary">
+                          {{ isset($paypalConfig) ? 'Actualizar Configuración' : 'Guardar Configuración' }}
+                      </button>
+                  </div>
               </form>
             </div>
-
             <!-- Envíos -->
             <div class="settings-section" id="shipping">
               <h2>Registrar Nueva Empresa de Envío</h2>
@@ -182,14 +193,26 @@
             <!-- Impuestos -->
             <div class="settings-section" id="tax">
               <h2>Configuración de IVA</h2>
-              <form id="iva-form" class="settings-form">
-                <div class="form-group">
-                  <label for="iva-porcentaje">Porcentaje de IVA</label>
-                  <input type="number" id="iva-porcentaje" name="iva-porcentaje" min="0" max="100" step="0.01" placeholder="Ej. 16" required />
-                </div>
-                <div class="form-actions">
-                  <button type="submit" class="btn btn-primary">Guardar IVA</button>
-                </div>
+              <form id="iva-form" class="settings-form" 
+                    action="{{ isset($ivaConfig) ? route('admin.configuracion.iva.update', $ivaConfig->id_configuracion) : route('admin.configuracion.iva.store') }}" 
+                    method="POST">
+                  @csrf
+                  @if(isset($ivaConfig))
+                      @method('PUT')
+                  @endif
+                  
+                  <div class="form-group">
+                      <label for="iva-porcentaje">Porcentaje de IVA</label>
+                      <input type="number" id="iva-porcentaje" name="iva-porcentaje" 
+                            value="{{ $ivaConfig->iva ?? old('iva-porcentaje') }}" 
+                            min="0" max="100" step="0.01" 
+                            placeholder="Ej. 16" required />
+                  </div>
+                  <div class="form-actions">
+                      <button type="submit" class="btn btn-primary">
+                          {{ isset($ivaConfig) ? 'Actualizar IVA' : 'Guardar IVA' }}
+                      </button>
+                  </div>
               </form>
             </div>
 
@@ -198,7 +221,6 @@
       </main>
     </div>
   </div>
-  <script src="paypal-configuracion.js"></script>
-  <script src="js/cerrar_sesion.js"></script>
+  <script></script>
 </body>
 </html>
