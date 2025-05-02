@@ -87,6 +87,21 @@
       </header>
 
       <main class="admin-content">
+            @if ($errors->any())
+          <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
+            <ul>
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        @if(session('success'))
+          <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
+            {{ session('success') }}
+          </div>
+        @endif
         <div class="settings-layout">
           <!-- Settings Sidebar -->
           <div class="settings-sidebar">
@@ -155,10 +170,15 @@
             <!-- Envíos -->
             <div class="settings-section" id="shipping">
               <h2>Registrar Nueva Empresa de Envío</h2>
-              <form id="envio-form" class="settings-form">
+              <form id="envio-form" class="settings-form" action="{{route('admin.empresa.store')}}" method="POST">
+                @csrf
                 <div class="form-group">
                   <label for="nueva-empresa">Nombre de la Empresa</label>
                   <input type="text" id="nueva-empresa" name="nueva-empresa" placeholder="Ej. DHL, FedEx, Estafeta" required />
+                </div>
+                <div class="form-group">
+                  <label for="nueva-empresa">Nombre contacto</label>
+                  <input type="text" id="nuevo-contacto" name="nuevo-contacto" placeholder="Ej. Juan Perez" required />
                 </div>
                 <div class="form-group">
                   <label for="contacto-empresa">Correo de Contacto</label>
@@ -170,7 +190,6 @@
                 </div>
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary">Registrar Empresa</button>
-                  <button type="reset" class="btn btn-secondary">Cancelar</button>
                 </div>
               </form>
 

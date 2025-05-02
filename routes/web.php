@@ -61,6 +61,8 @@ Route::middleware(['auth', 'role:administrador'])
 
         Route::get('/pedidos', [AdministradorController::class,'getPedidos'])->name('pedidos');
 
+        //RUTA PARA REGISTRA EMPRESA ENVIO
+        Route::post("/empresa-envio/registrar",[AdministradorController::class,'storeEmpresaEnvio'])->name("empresa.store");
         //RUTAS PARA LA CONFIGURACION
         Route::get('/configuracion', [AdministradorController::class,'getViewConfiguracion'])->name('configuracion');
 

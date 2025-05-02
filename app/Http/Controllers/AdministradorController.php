@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Configuracion;
+use App\Models\Empresa;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AdministradorController extends Controller
 {
@@ -110,6 +112,36 @@ class AdministradorController extends Controller
         ]);
         
         return redirect()->back()->with('success', 'IVA actualizado correctamente');
+    }
+
+    public function storeEmpresaEnvio(Request $request){
+        $validator = Validator::make($request->all(), [
+            "nueva-empresa"     => 'required|string|max:255',
+            "nuevo-contacto"    => 'required|string|max:255',
+            "contacto-empresa"  => 'required|string|email|max:255',
+            "telefono-empresa"  => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^\+?[0-9\s\-]{7,20}$/'
+            ]
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
+        }
+    
+        $validatedData = $validator->validated();
+        Empresa::create([
+            "nombreEmpresa"=>$validatedData["nueva-empresa"],
+            "nombreContacto"=>$validatedData["nuevo-contacto"],
+            "correo"=>$validatedData["contacto-empresa"],
+            "numeroContacto"=>$validatedData["telefono-empresa"]
+        ]);
+
+        return redirect()->back()->with('success', 'Empresa registrada correctamente');
     }
 
 }

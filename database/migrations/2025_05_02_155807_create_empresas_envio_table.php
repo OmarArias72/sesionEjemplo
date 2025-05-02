@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('empresas_envio', function (Blueprint $table) {
             $table->id('id_empresa');
             $table->string("nombreContacto");
+            $table->string("nombreEmpresa");
             $table->string("numeroContacto");
             $table->string("correo");
             $table->timestamps();
