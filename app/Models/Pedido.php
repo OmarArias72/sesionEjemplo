@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
+    protected $primaryKey = 'id_pedido';
+    protected $table="pedidos";
+    public $timestamps=true;
     // Relación con usuario
     public function usuario()
     {

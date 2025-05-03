@@ -78,4 +78,8 @@ class User extends Authenticatable
     {
         return 'id_usuario';
     }
+    public function getAuthIdentifier()
+    {
+        return $this->getKey(); // Esto devuelve el id_usuario
+    }
 }

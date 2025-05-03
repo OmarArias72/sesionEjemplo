@@ -148,18 +148,38 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($pagos as $pago)
                                 <tr>
-                                    <td>TRX-10289</td>
-                                    <td class="order-id">#ORD-5289</td>
-                                    <td>Juan Pérez</td>
-                                    <td>19 Mar 2025</td>
+                                    <td>{{ $pago['id_transaccion'] }}</td>
+                                    <td class="order-id">{{ $pago['numero_pedido'] }}</td>
+                                    <td>{{ $pago['nombre_cliente'] }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($pago['fecha_pago'])->format('d M Y') }}</td>
                                     <td>
                                         <div class="payment-method">
-                                            <i class="fab fa-cc-visa"></i> Visa ****4589
+                                            @if(str_contains(strtolower($pago['metodo_pago']), 'paypal'))
+                                                <i class="fab fa-paypal"></i> PayPal
+                                            @elseif(str_contains(strtolower($pago['metodo_pago']), 'visa'))
+                                                <i class="fab fa-cc-visa"></i> Visa
+                                            @elseif(str_contains(strtolower($pago['metodo_pago']), 'mastercard'))
+                                                <i class="fab fa-cc-mastercard"></i> MasterCard
+                                            @elseif(str_contains(strtolower($pago['metodo_pago']), 'transferencia'))
+                                                <i class="fas fa-university"></i> Transferencia Bancaria
+                                            @else
+                                                {{ $pago['metodo_pago'] }}
+                                            @endif
                                         </div>
                                     </td>
-                                    <td>$129.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
+                                    <td>${{ number_format($pago['monto_pagado'], 2) }}</td>
+                                    <td>
+                                        <span class="payment-status 
+                                            @if($pago['estado'] == 'Completado') paid 
+                                            @elseif($pago['estado'] == 'Pendiente') pending 
+                                            @elseif($pago['estado'] == 'Fallido') failed 
+                                            @elseif($pago['estado'] == 'Reembolsado') refunded 
+                                            @endif">
+                                            {{ $pago['estado'] }}
+                                        </span>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
                                             <button class="btn-icon view"><i class="fas fa-eye"></i></button>
@@ -167,158 +187,42 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>TRX-10288</td>
-                                    <td class="order-id">#ORD-5288</td>
-                                    <td>María García</td>
-                                    <td>18 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-paypal"></i> PayPal
-                                        </div>
-                                    </td>
-                                    <td>$89.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10287</td>
-                                    <td class="order-id">#ORD-5287</td>
-                                    <td>Carlos López</td>
-                                    <td>18 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-cc-mastercard"></i> MasterCard ****7823
-                                        </div>
-                                    </td>
-                                    <td>$199.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10286</td>
-                                    <td class="order-id">#ORD-5286</td>
-                                    <td>Ana Martínez</td>
-                                    <td>17 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fas fa-university"></i> Transferencia Bancaria
-                                        </div>
-                                    </td>
-                                    <td>$59.99</td>
-                                    <td><span class="payment-status pending">Pendiente</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10285</td>
-                                    <td class="order-id">#ORD-5285</td>
-                                    <td>Roberto Sánchez</td>
-                                    <td>17 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-cc-visa"></i> Visa ****1234
-                                        </div>
-                                    </td>
-                                    <td>$149.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10284</td>
-                                    <td class="order-id">#ORD-5284</td>
-                                    <td>Laura Rodríguez</td>
-                                    <td>16 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-cc-mastercard"></i> MasterCard ****5678
-                                        </div>
-                                    </td>
-                                    <td>$299.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10283</td>
-                                    <td class="order-id">#ORD-5283</td>
-                                    <td>Pedro Gómez</td>
-                                    <td>16 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-paypal"></i> PayPal
-                                        </div>
-                                    </td>
-                                    <td>$79.99</td>
-                                    <td><span class="payment-status refunded">Reembolsado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-10282</td>
-                                    <td class="order-id">#ORD-5282</td>
-                                    <td>Carmen Díaz</td>
-                                    <td>15 Mar 2025</td>
-                                    <td>
-                                        <div class="payment-method">
-                                            <i class="fab fa-cc-visa"></i> Visa ****9012
-                                        </div>
-                                    </td>
-                                    <td>$119.99</td>
-                                    <td><span class="payment-status paid">Completado</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-icon view"><i class="fas fa-eye"></i></button>
-                                            <button class="btn-icon receipt"><i class="fas fa-file-invoice"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
-                        </table>
+                        </table>                        
                     </div>
                     
+                    <!-- Paginación -->
                     <div class="admin-pagination">
-                        <span class="pagination-info">Mostrando 1-8 de 32 pagos</span>
+                        <span class="pagination-info">
+                            Mostrando {{ $pagos->firstItem() }}-{{ $pagos->lastItem() }} de {{ $pagos->total() }} pagos
+                        </span>
                         <div class="pagination">
-                            <button class="pagination-btn prev" disabled>Anterior</button>
-                            <button class="pagination-btn active">1</button>
-                            <button class="pagination-btn">2</button>
-                            <button class="pagination-btn">3</button>
-                            <button class="pagination-btn">4</button>
-                            <button class="pagination-btn next">Siguiente</button>
+                            @if($pagos->onFirstPage())
+                                <button class="pagination-btn prev" disabled>Anterior</button>
+                            @else
+                                <a href="{{ $pagos->previousPageUrl() }}" class="pagination-btn prev">Anterior</a>
+                            @endif
+
+                            @foreach(range(1, $pagos->lastPage()) as $page)
+                                @if($page == $pagos->currentPage())
+                                    <button class="pagination-btn active">{{ $page }}</button>
+                                @else
+                                    <a href="{{ $pagos->url($page) }}" class="pagination-btn">{{ $page }}</a>
+                                @endif
+                            @endforeach
+
+                            @if($pagos->hasMorePages())
+                                <a href="{{ $pagos->nextPageUrl() }}" class="pagination-btn next">Siguiente</a>
+                            @else
+                                <button class="pagination-btn next" disabled>Siguiente</button>
+                            @endif
                         </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-    <script src="js/cerrar_sesion.js"></script>
+    <script></script>
 </body>
 </html>

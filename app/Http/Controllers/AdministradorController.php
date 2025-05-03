@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Configuracion;
 use App\Models\Empresa;
+use App\Models\Pago;
+use App\Models\Pedido;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +28,38 @@ class AdministradorController extends Controller
 
 
     public function getViewPagos(){
-        return view("admin-pagos");
+         // Obtener los pagos con sus relaciones y paginación
+        $pagos = Pago::with(['pedido.usuario'])
+        ->select([
+            'pagos.pago as id_transaccion',
+            'pagos.id_pedido',
+            'pagos.metodoPago',
+            'pagos.fechaPago',
+            'pagos.montoPagado',
+            'pagos.estado'
+        ])
+        ->orderBy('pagos.fechaPago', 'desc')
+        ->paginate(8);
+
+        // Transformar los datos para la vista
+        $pagosTransformados = $pagos->getCollection()->map(function ($pago) {
+            return [
+                'id_transaccion' => $pago->id_transaccion,
+                'numero_pedido' => $pago->pedido ? '#ORD-' . $pago->pedido->id_pedido : 'N/A',
+                'nombre_cliente' => $pago->pedido && $pago->pedido->usuario 
+                    ? $pago->pedido->usuario->nombre . ' ' . $pago->pedido->usuario->apellido 
+                    : 'Cliente no disponible',
+                'metodo_pago' => $pago->metodoPago,
+                'fecha_pago' => $pago->fechaPago,
+                'monto_pagado' => $pago->montoPagado,
+                'estado' => $pago->estado
+            ];
+        });
+
+        // Reemplazar la colección en el paginador
+        $pagos->setCollection($pagosTransformados);
+
+        return view("admin-pagos", ['pagos' => $pagos]);
     }
 
     public function getPedidos(){
@@ -43,7 +76,13 @@ class AdministradorController extends Controller
         //return view("admin-configuracion");
     }
     public function getViewEnvios(){
-        return view("admin-gestion-envios");
+        $pedidos = Pedido::with([
+            'usuario',
+            'detalles.producto', // Cargar producto por si se requiere
+            'pago'
+        ])->orderBy('created_at', 'desc')->paginate(5);
+    
+        return view("admin-gestion-envios", compact("pedidos"));
     }
 
     // Para almacenar (POST)

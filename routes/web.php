@@ -88,5 +88,6 @@ Route::middleware(['auth','role:usuario_estandar'])
         Route::put("actualizar-direccion",[UsuarioController::class,'updateDireccion'])->name("direccion-actualizar");
 
         Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
+        Route::get('/pedido/detalles/{pedidoId}',[UsuarioController::class,'detallePedido'])->name("pedidos-detalles")->where('numeroPedido', '.*');
     });
 require __DIR__.'/auth.php';

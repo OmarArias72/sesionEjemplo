@@ -74,40 +74,73 @@
           <!-- Contenedor de pedidos -->
           <div class="orders-container">
             <h1>Mis Pedidos</h1>
-            <table class="orders-table">
+            <table class="admin-table">
               <thead>
-                <tr>
-                  <th>Pedido</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
-                  <th>Total</th>
-                  <th>Detalles</th>
-                </tr>
+                  <tr>
+                      <th>Pedido</th>
+                      <th>Fecha</th>
+                      <th>Estado</th>
+                      <th>Total</th>
+                      <th>Detalles</th>
+                  </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>#123456</td>
-                  <td>10/03/2025</td>
-                  <td class="status completed">Completado</td>
-                  <td>€120.50</td>
-                  <td><a href="detalle-pedido.html">Ver detalles</a></td>
-                </tr>
-                <tr>
-                  <td>#123457</td>
-                  <td>15/03/2025</td>
-                  <td class="status pending">Pendiente</td>
-                  <td>€85.00</td>
-                  <td><a href="detalle-pedido.html">Ver detalles</a></td>
-                </tr>
-                <tr>
-                  <td>#123458</td>
-                  <td>18/03/2025</td>
-                  <td class="status shipped">Enviado</td>
-                  <td>€45.75</td>
-                  <td><a href="detalle-pedido.html">Ver detalles</a></td>
-                </tr>
+                  @foreach($pedidos as $pedido)
+                  <tr>
+                      <td class="order-id">{{ $pedido['numero_pedido'] }}</td>
+                      <td>{{ \Carbon\Carbon::parse($pedido['fecha_pedido'])->format('d M Y') }}</td>
+                      <td>
+                          <span class="status-badge 
+                              @if($pedido['estado'] == 'Completado') completed
+                              @elseif($pedido['estado'] == 'Procesando') processing
+                              @elseif($pedido['estado'] == 'Enviado') shipped
+                              @elseif($pedido['estado'] == 'Cancelado') cancelled
+                              @else pending @endif">
+                              {{ $pedido['estado'] }}
+                          </span>
+                      </td>
+                      <td>${{ number_format($pedido['total'], 2) }}</td>
+                      <td>
+                        @php
+                            $pedidoId = str_replace('#ORD-', '', $pedido['numero_pedido']);
+                        @endphp
+                        
+                        <a href="{{ route('user.pedidos-detalles', ['pedidoId' => $pedidoId]) }}"
+                          class="btn btn-small btn-primary">
+                            Ver Detalles
+                        </a>
+                      </td>
+                  </tr>
+                  @endforeach
               </tbody>
-            </table>
+          </table>
+          </div>
+        </div>
+        <!-- Paginación -->
+        <div class="admin-pagination">
+          <span class="pagination-info">
+              Mostrando {{ $pedidos->firstItem() }}-{{ $pedidos->lastItem() }} de {{ $pedidos->total() }} pedidos
+          </span>
+          <div class="pagination">
+              @if($pedidos->onFirstPage())
+                  <button class="pagination-btn prev" disabled>Anterior</button>
+              @else
+                  <a href="{{ $pedidos->previousPageUrl() }}" class="pagination-btn prev">Anterior</a>
+              @endif
+
+              @foreach(range(1, $pedidos->lastPage()) as $page)
+                  @if($page == $pedidos->currentPage())
+                      <button class="pagination-btn active">{{ $page }}</button>
+                  @else
+                      <a href="{{ $pedidos->url($page) }}" class="pagination-btn">{{ $page }}</a>
+                  @endif
+              @endforeach
+
+              @if($pedidos->hasMorePages())
+                  <a href="{{ $pedidos->nextPageUrl() }}" class="pagination-btn next">Siguiente</a>
+              @else
+                  <button class="pagination-btn next" disabled>Siguiente</button>
+              @endif
           </div>
         </div>
       </div>

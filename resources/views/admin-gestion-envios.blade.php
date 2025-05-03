@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TiendaOnline - Gestión de Envíos</title>
+    <title>TiendaOnline - Gestión de Pedidos</title>
     <link rel="stylesheet" href="styles.css" />
     @vite('resources/css/app.css')
     <link
@@ -33,13 +33,13 @@
                         <span>Productos</span>
                     </a>
                 </li>
-                <li>
+                <li class="active">
                     <a href="{{route('admin.pedidos')}}">
                         <i class="fas fa-box"></i>
                         <span>Pedidos</span>
                     </a>
                 </li>
-                <li class="active">
+                <li>
                     <a href="{{route('admin.envios')}}">
                         <i class="fas fa-truck"></i>
                         <span>Envíos</span>
@@ -60,12 +60,6 @@
             </ul>
         </nav>
         
-        {{-- <div class="sidebar-footer">
-            <a href="#" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesión</span>
-            </a>
-        </div> --}}
         <div class="sidebar-footer">
             <form method="POST" action="{{ route('logout') }}" id="logout-form">
                 @csrf
@@ -81,7 +75,7 @@
       <div class="admin-main">
         <!-- Header -->
         <header class="admin-header">
-          <h1>Gestión de Envíos</h1>
+          <h1>Gestión de Pedidos</h1>
 
           <div class="admin-header-actions">
             <div class="admin-search">
@@ -96,9 +90,9 @@
           </div>
         </header>
 
-        <!-- Gestión de Envíos Content -->
+        <!-- Gestión de Pedidos Content -->
         <main class="admin-content">
-          <div class="admin-envios">
+          <div class="admin-pedidos">
             <h2>Listado de Pedidos</h2>
 
             <!-- Filtro por estado -->
@@ -108,70 +102,53 @@
                 <option value="todos">Todos</option>
                 <option value="completado">Completado</option>
                 <option value="pendiente">Pendiente</option>
-                <option value="asignado">Asignado</option>
+                <option value="cancelado">Cancelado</option>
               </select>
             </div>
 
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Pedido</th>
+                  <th>N° Pedido</th>
                   <th>Cliente</th>
                   <th>Fecha</th>
-                  <th>Productos</th>
+                  <th>N° Productos</th>
                   <th>Total</th>
-                  <th>Pago</th>
+                  <th>Estado Pago</th>
                 </tr>
               </thead>
               <tbody>
+                @foreach($pedidos as $pedido)
                 <tr>
-                  <td>#1001</td>
-                  <td>Juan Pérez</td>
-                  <td>2023-10-01</td>
-                  <td>Producto 1 (x2), Producto 2 (x1)</td>
-                  <td>$150.00</td>
-                  <td><span class="status-badge paid">Pagado</span></td>
+                  <td>#{{ $pedido->id_pedido }}</td>
+                  <td>{{ $pedido->usuario->nombre }} {{ $pedido->usuario->apellido }}</td>
+                  <td>
+                    @if ($pedido->created_at)
+                      {{ $pedido->created_at->format('Y-m-d') }}
+                    @else
+                        No disponible
+                    @endif
+                  </td>
+                  <td>{{ $pedido->detalles ? $pedido->detalles->sum('cantidad') : 0 }}</td>
+                  <td>${{ number_format($pedido->pago->montoPagado ?? 0, 2) }}</td>
+                  <td>
+                    @if($pedido->pago)
+                      <span class="status-badge {{ $pedido->pago->estado == 'completado' ? 'paid' : 'pending' }}">
+                        {{ ucfirst($pedido->pago->estado) }}
+                      </span>
+                    @else
+                      <span class="status-badge pending">Sin pago</span>
+                    @endif
+                  </td>
                 </tr>
-                <tr>
-                  <td>#1002</td>
-                  <td>María Gómez</td>
-                  <td>2023-10-02</td>
-                  <td>Producto 3 (x1)</td>
-                  <td>$75.00</td>
-                  <td><span class="status-badge pending">Pendiente</span></td>
-                </tr>
-                <tr>
-                  <td>#1003</td>
-                  <td>Carlos Ruiz</td>
-                  <td>2023-10-03</td>
-                  <td>Producto 4 (x3), Producto 5 (x2)</td>
-                  <td>$200.00</td>
-                  <td><span class="status-badge paid">Pagado</span></td>
-                </tr>
+                @endforeach
               </tbody>
             </table>
 
-            <h2>Asignación de Pedidos</h2>
-            <form id="assignment-form">
-              <label for="order-id-assign">ID Pedido:</label>
-              <input
-                type="text"
-                id="order-id-assign"
-                name="order-id-assign"
-                readonly
-              />
-
-              <label for="external-company">Empresa Externa:</label>
-              <select id="external-company" name="external-company">
-                <option value="empresa1">Empresa 1</option>
-                <option value="empresa2">Empresa 2</option>
-                <option value="empresa3">Empresa 3</option>
-              </select>
-
-              <button type="submit" class="btn btn-primary">
-                Asignar Pedido
-              </button>
-            </form>
+            <!-- Paginación -->
+            <div class="mt-4">
+                {{ $pedidos->links() }}
+            </div>
           </div>
         </main>
       </div>

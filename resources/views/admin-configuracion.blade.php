@@ -192,21 +192,6 @@
                   <button type="submit" class="btn btn-primary">Registrar Empresa</button>
                 </div>
               </form>
-
-              <h3>Empresas Registradas</h3>
-              <table class="envios-table" id="tabla-empresas-envio">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Las filas se insertan dinámicamente aquí -->
-                </tbody>
-              </table>
             </div>
 
             <!-- Impuestos -->
