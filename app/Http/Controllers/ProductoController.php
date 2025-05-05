@@ -65,7 +65,7 @@ class ProductoController extends Controller
     public function store(Request $request){
 
         // Registrar en log el valor enviado desde el formulario
-        Log::info('Valor de id_categoria recibido: ' . $request->input('id_categoria'));
+        //Log::info('Valor de id_categoria recibido: ' . $request->input('id_categoria'));
         $request->validate([
             "nombre"=>'required|string|max:255',
             "descripcion"=>'required|string|max:255',

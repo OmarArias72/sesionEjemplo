@@ -75,14 +75,18 @@ class AdministradorController extends Controller
         return view("admin-configuracion", compact('paypalConfig', 'ivaConfig'));
         //return view("admin-configuracion");
     }
+    public function verPagosEnvios(){
+        return view("admin-gestion-envios");
+    }
     public function getViewEnvios(){
         $pedidos = Pedido::with([
             'usuario',
             'detalles.producto', // Cargar producto por si se requiere
             'pago'
         ])->orderBy('created_at', 'desc')->paginate(5);
-    
-        return view("admin-gestion-envios", compact("pedidos"));
+            
+        $empresas = Empresa::all(); // Obtener todas las empresas
+        return view("admin-gestion-envios-tabla", compact("pedidos","empresas"));
     }
 
     // Para almacenar (POST)

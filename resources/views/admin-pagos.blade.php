@@ -18,7 +18,7 @@
             
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="active">
+                    <li>
                         <a href="{{route('admin.dashboard-admin')}}">
                             <i class="fas fa-chart-bar"></i>
                             <span>Dashboard</span>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdministradorController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
@@ -34,8 +35,13 @@ Route::middleware(['auth', 'role:administrador'])
     ->group(function () {
         Route::get('/dashboard', [AdministradorController::class,'getViewDashboard'])->name('dashboard-admin'); // admin.dashboard
 
-        Route::get('/envios', [AdministradorController::class,'getViewEnvios'])->name('envios');
-
+        //VISTA PARA EL PANEL DE ENVIOS
+        Route::get('/envios', [AdministradorController::class,'verPagosEnvios'])->name('envios');
+        Route::get('envios/pedidos/estatus',[AdministradorController::class, 'getViewEnvios'])->name('envios.tabla');
+        Route::post('/envios/usuario/pedido',[EnvioController::class,'store'])->name('store.envio');
+        Route::get('/lista/envios/asignados',[EnvioController::class,'obtenerEnvios'])->name("lista.envios-asignados");
+        Route::put('/actualizar/pedido/envio',[EnvioController::class,'update'])->name("pedido-envio.actualizar");
+        Route::get("/gestion-envios/estado/envios",[EnvioController::class,'listaEnvios'])->name("envios-lista.estado");
         //VISTAS CATEGORIAS
         Route::get('/categorias', [CategoriaController::class,'createCategoriaView'])->name('categorias');
 

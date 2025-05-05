@@ -17,6 +17,19 @@ class Envio extends Model
         'id_pedido',
         'id_empresa'
     ];
+    protected $dates = [
+        'fechaEnvio',
+        'fechaEstimadaEntrega',
+        'fechaEntrega',
+        'created_at',
+        'updated_at'
+    ];
+
+    // Estados posibles
+    const ESTADO_PENDIENTE = 'Pendiente';
+    const ESTADO_ENVIADO = 'Enviado';
+    const ESTADO_ENTREGADO = 'Entregado';
+    const ESTADO_CANCELADO = 'Cancelado';
 
     // Relación con pedido
     public function pedido()
@@ -29,4 +42,5 @@ class Envio extends Model
     {
         return $this->belongsTo(Empresa::class, 'id_empresa');
     }
+    
 }

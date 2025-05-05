@@ -38,4 +38,9 @@ class Pedido extends Model
     {
         return $this->hasOne(Envio::class, 'id_pedido');
     }
+    // Método para verificar si ya tiene envío
+    public function tieneEnvio()
+    {
+        return $this->envio()->exists();
+    }
 }
