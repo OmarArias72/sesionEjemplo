@@ -15,8 +15,10 @@
                 <a href="{{route('home')}}" class="logo">TiendaOnline</a>
                 
                 <div class="search-bar">
-                    <input type="text" placeholder="Buscar productos...">
-                    <button type="submit"><i class="fas fa-search"></i></button>
+                    <form action="{{ route('productos.search') }}" method="GET">
+                        <input type="text" name="query" placeholder="Buscar productos...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
                 </div>
                 
                 <nav class="nav-menu">

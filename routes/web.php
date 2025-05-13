@@ -96,4 +96,12 @@ Route::middleware(['auth','role:usuario_estandar'])
         Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
         Route::get('/pedido/detalles/{pedidoId}',[UsuarioController::class,'detallePedido'])->name("pedidos-detalles")->where('numeroPedido', '.*');
     });
+
+//RUTAS PARA VER PRODUCTOS
+// Ruta para la búsqueda y listado de productos
+Route::get('/productos', [ProductoController::class, 'busquedaProducto'])->name('productos.search');
+
+// Ruta para ver detalles de un producto
+Route::get('/productos/{id}', [ProductoController::class, 'mostrarDetallesProducto'])->name('productos.show');
+
 require __DIR__.'/auth.php';
