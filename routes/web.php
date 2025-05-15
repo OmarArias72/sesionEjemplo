@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdministradorController;
+use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EnvioController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
@@ -93,8 +95,20 @@ Route::middleware(['auth','role:usuario_estandar'])
 
         Route::put("actualizar-direccion",[UsuarioController::class,'updateDireccion'])->name("direccion-actualizar");
 
+        //RUTAS PARA PEDIDOS
+        Route::post("/pedido/procesar",[PedidoController::class,'crearPedido'])->name("crear.pedido");
+        Route::get('/pedido/estatus',[PedidoController::class,'success'])->name("success");
+        Route::get('/pedido/cancelado',[PedidoController::class,'failed'])->name("cancel");
         Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
         Route::get('/pedido/detalles/{pedidoId}',[UsuarioController::class,'detallePedido'])->name("pedidos-detalles")->where('numeroPedido', '.*');
+        //RUTA PARA EL CARRITO
+        Route::post('/carrito/agregar', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+        Route::get('/carrito', [CarritoController::class, 'verCarrito'])->name('carrito.ver');
+        Route::put('/carrito/{id}', [CarritoController::class, 'actualizar'])->name('carrito.update');
+        Route::delete('/carrito/{id}', [CarritoController::class, 'eliminar'])->name('carrito.remove');
+        Route::put('/cancelar/pedido/{id_pedido}',[PedidoController::class,'cancelarPedido'])->name("cancelar-pedido");
+        Route::post('/pedido/{id_pedido}/generar-pago-nuevamente', [PedidoController::class, 'generarPagoNuevamente'])->name('generar-pago-nuevamente');
+
     });
 
 //RUTAS PARA VER PRODUCTOS

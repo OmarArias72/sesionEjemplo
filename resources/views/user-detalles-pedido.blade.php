@@ -94,7 +94,29 @@
                                 {{ $pedido['fecha_estimada_entrega'] }}
                             @endif
                         </p>
+
+                        @if($pedido['estado_pedido'] === 'pendiente')
+                            <div class="order-actions mt-4">
+                                <form method="POST" action="{{ route('user.cancelar-pedido', $pedido['id_pedido']) }}" class="inline-block">
+                                    
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas cancelar este pedido?')">
+                                        <i class="fas fa-times-circle"></i> Cancelar Pedido
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" action="{{ route('user.generar-pago-nuevamente', $pedido['id_pedido']) }}" class="inline-block ml-2">
+                                    
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-sync-alt"></i> Regenerar Pago
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
+                    
 
                     <div class="shipping-info">
                         <h2>Dirección de Envío</h2>

@@ -14,7 +14,7 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="index.html" class="logo">TiendaOnline</a>
+        <a href="{{route('home')}}" class="logo">TiendaOnline</a>
         <div class="search-bar">
                     <form action="{{ route('productos.search') }}" method="GET">
                         <input type="text" name="query" placeholder="Buscar productos...">

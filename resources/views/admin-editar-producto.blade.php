@@ -94,7 +94,7 @@
             
                 <div class="form-group">
                     <label for="precio" class="form-label">Precio:</label>
-                    <input type="number" id="precio" step="0.01" name="precio" class="form-input" value="{{ $productoEncontrado->precio ?? '' }}" required>
+                    <input type="number" id="precio" step="0.01" name="precio" class="form-input" value="{{ number_format($productoEncontrado->precio ?? 0, 2, '.', '') }}" required>
                 </div>
             
                 <div class="form-group">

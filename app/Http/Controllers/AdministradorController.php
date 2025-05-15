@@ -31,7 +31,7 @@ class AdministradorController extends Controller
          // Obtener los pagos con sus relaciones y paginación
         $pagos = Pago::with(['pedido.usuario'])
         ->select([
-            'pagos.pago as id_transaccion',
+            'pagos.id_pago as id_transaccion',
             'pagos.id_pedido',
             'pagos.metodoPago',
             'pagos.fechaPago',

@@ -8,6 +8,13 @@ class Pedido extends Model
 {
     protected $primaryKey = 'id_pedido';
     protected $table="pedidos";
+    protected $fillable=[
+        'id_usuario',
+        'estado',
+        'id_direccion',
+        'subtotal',
+        'total'
+    ];
     public $timestamps=true;
     // Relación con usuario
     public function usuario()

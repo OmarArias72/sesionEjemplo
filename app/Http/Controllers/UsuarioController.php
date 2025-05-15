@@ -141,7 +141,7 @@ class UsuarioController extends Controller
 
     public function detallePedido($pedidoId)
     {
-        Log::info("NUMERO PEDIDO",["id"=>$pedidoId]);
+        //Log::info("NUMERO PEDIDO",["id"=>$pedidoId]);
         
         // Obtener el pedido con todas las relaciones necesarias
         $pedido = Pedido::with([
@@ -153,10 +153,13 @@ class UsuarioController extends Controller
         ])->findOrFail($pedidoId);
 
         // Formatear los datos para la vista
+        // Formatear los datos para la vista
         $datosPedido = [
+            'id_pedido' => $pedido->id_pedido, // Añadimos el ID real para usar en los formularios
+            'estado_pedido' => $pedido->estado, // Añadimos el estado real del pedido
             'numero_pedido' => '#ORD-' . $pedido->id_pedido,
             'fecha_pedido' => $pedido->created_at  ?? 'No disponible',
-            'estado_envio' => $pedido->envio->estado ?? 'No idisponible',
+            'estado_envio' => $pedido->envio->estado ?? 'No disponible',
             'estado_pago' => $pedido->pago->estado ?? 'No pagado',
             'fecha_estimada_entrega' => $pedido->envio->fechaEstimadaEntrega ?? 'No disponible',
             'direccion_envio' => [
@@ -177,9 +180,7 @@ class UsuarioController extends Controller
                 ];
             }),
             'total_pedido' => $pedido->total ?? 0,
-            'subtotal' => $pedido->detalles->sum(function ($detalle) {
-                return ($detalle->cantidad ?? 0) * ($detalle->precioUnitario ?? 0);
-            })
+            'subtotal' => $pedido->subtotal
         ];
 
         return view('user-detalles-pedido', ['pedido' => $datosPedido]);

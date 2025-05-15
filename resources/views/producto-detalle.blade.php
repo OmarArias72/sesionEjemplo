@@ -11,6 +11,25 @@
 <body>
   <!-- Header -->
   <header class="header">
+            {{-- Mostrar errores de validación --}}
+            @if ($errors->any())
+                <div class="alert alert-danger" style="color: red;">
+                    <strong>Se encontraron los siguientes errores:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- Mostrar mensaje de éxito --}}
+            @if (session('success'))
+                <div class="alert alert-success" style="color: green;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
       <div class="container">
           <div class="header-content">
               <a href="{{ route('home') }}" class="logo">TiendaOnline</a>
@@ -102,17 +121,22 @@
                       </div>
                       
                       <div class="product-actions">
-                          <div class="quantity-selector">
-                              <button class="quantity-btn" id="btn-decrease">-</button>
-                              <input type="number" value="1" min="1" max="{{ $producto->stock }}" id="quantity-input" class="quantity-input">
-                              <button class="quantity-btn" id="btn-increase">+</button>
-                          </div>
-                          <button class="btn btn-primary btn-add-cart" id="btn-add-cart" 
-                                  {{ $producto->stock <= 0 ? 'disabled' : '' }}>
-                              <i class="fas fa-shopping-cart"></i> 
-                              {{ $producto->stock <= 0 ? 'Agotado' : 'Añadir al carrito' }}
-                          </button>
-                      </div>
+                            <div class="quantity-selector">
+                                <button class="quantity-btn" id="btn-decrease">-</button>
+                                <input type="number" value="1" min="1" max="{{ $producto->stock }}" id="quantity-input" name="cantidad" class="quantity-input">
+                                <button class="quantity-btn" id="btn-increase">+</button>
+                            </div>
+                            <form action="{{ route('user.carrito.agregar') }}" method="POST" class="inline-form">
+                                @csrf
+                                <input type="hidden" name="id_producto" value="{{ $producto->id_producto }}">
+                                <input type="hidden" name="cantidad" id="cantidad-hidden" value="1">
+                                <button type="submit" class="btn btn-primary btn-add-cart" id="btn-add-cart" 
+                                        {{ $producto->stock <= 0 ? 'disabled' : '' }}>
+                                    <i class="fas fa-shopping-cart"></i> 
+                                    {{ $producto->stock <= 0 ? 'Agotado' : 'Añadir al carrito' }}
+                                </button>
+                            </form>
+                     </div>
                       
                       <div class="product-benefits" id="product-benefits">
                           <div class="benefit">
@@ -161,7 +185,7 @@
               </div>
               
               <!-- Related Products -->
-              <section class="related-products">
+              {{-- <section class="related-products">
                   <h2 class="section-title">Productos relacionados</h2>
                   {{-- <div class="products-grid">
                       <!-- Ejemplo de productos relacionados, puedes reemplazar con datos reales -->
@@ -180,8 +204,8 @@
                           </div>
                       </div>
                       @endforeach
-                  </div> --}}
-              </section>
+                  </div>
+              </section> --}}
           </div>
       </div>
   </main>
@@ -280,18 +304,21 @@
           });
           
           // Manejo del botón "Añadir al carrito"
-          const addToCartBtn = document.getElementById('btn-add-cart');
-          if (addToCartBtn) {
-              addToCartBtn.addEventListener('click', function() {
-                  const productId = {{ $producto->id_producto }};
-                  const quantity = parseInt(quantityInput.value);
-                  
-                  // Aquí puedes agregar la lógica para añadir al carrito
-                  // Por ejemplo, usando AJAX para enviar los datos al servidor
-                  alert(`Producto añadido al carrito: ${quantity} unidad(es)`);
-              });
-          }
-      });
+            const addToCartBtn = document.getElementById('btn-add-cart');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', function(e) {
+                    if (this.disabled) {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Actualizar el valor de cantidad en el formulario antes de enviar
+                    const form = this.closest('form');
+                    const quantityInput = document.getElementById('quantity-input');
+                    form.querySelector('input[name="cantidad"]').value = quantityInput.value;
+                });
+            }
+        });
   </script>
 </body>
 </html>

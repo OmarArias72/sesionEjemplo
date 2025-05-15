@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Configuracion;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,7 +76,17 @@ class ProductoController extends Controller
             "estado" => 'required|in:activo,inactivo',
             "imagen" => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
         ]);
-
+        // Obtener configuración de IVA (asumiendo que se identifica por tener valor en iva)
+        $ivaConfig = Configuracion::whereNotNull('iva')->first();
+        $precioBase=$request->precio;
+        $precioConIVA=0;
+        $IVA=$ivaConfig->iva;
+        if($ivaConfig){
+             $precioConIVA = round(($precioBase * $IVA) + $precioBase, 2); 
+            
+        }else{
+            $precioConIVA=$precioBase;
+        }
         $nombreImagen = null;
 
         if ($request->hasFile('imagen')) {
@@ -90,7 +101,7 @@ class ProductoController extends Controller
             'estado' => $request->estado,
             'url_imagen' => $nombreImagen,
             'stock' => $request->stock,
-            'precio' => $request->precio,
+            'precio' => $precioConIVA,
             'id_categoria' => $request->id_categoria
         ]);
         return redirect()->back()->with('success', 'Producto creado correctamente.');
@@ -118,14 +129,23 @@ class ProductoController extends Controller
             DB::beginTransaction();
 
             $producto = Producto::findOrFail($request->input('id_producto'));
-
+            // Obtener configuración de IVA
+            $ivaConfig = Configuracion::whereNotNull('iva')->first();
+            $precioConIVA=0;
+            $precioBase=$request->input('precio');
+            $IVA=round($ivaConfig->iva, 4);
+            if($ivaConfig){
+                $precioConIVA = round(($precioBase * $IVA) + $precioBase, 2); 
+            }else{
+                $precioConIVA=$precioBase;
+            }
             // Preparar datos para actualizar
             $data = [
                 'nombre_producto' => $request->input('nombre'),
                 'descripcion' => $request->input('descripcion'),
                 'stock' => $request->input('stock'),
                 'estado' => $request->input('estado'),
-                'precio' => $request->input('precio'),
+                'precio' => $precioConIVA,
                 'id_categoria' => $request->input('id_categoria'),
             ];
 

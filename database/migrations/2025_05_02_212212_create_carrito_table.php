@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('id_usuario')->constrained('usuarios', 'id_usuario')->onDelete('cascade');
             $table->timestamp('fecha_creacion')->nullable();
             $table->timestamp('fecha_actualizacion')->nullable();
-            $table->enum('estado', ['activo', 'convertido_en_pedido', 'cancelado'])->default('activo');
+            $table->enum('estado', ['activo', 'convertido_en_pedido', 'cancelado','completado'])->default('activo');
             $table->timestamps();
         });
     }
