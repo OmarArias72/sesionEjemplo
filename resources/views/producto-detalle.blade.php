@@ -39,9 +39,19 @@
               </div>
               <nav class="nav-menu">
                   <ul>
-                      <li><a href=""><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
-                      <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
-                  </ul>
+                        
+                        @auth
+                        <li><a href="{{route('user.carrito.ver')}}"><i class="fas fa-shopping-cart"></i> Carrito (@auth{{ auth()->user()->carritoActivoProductosCount() }}@else 0 @endauth)</a></li>
+                            <li>
+                                <a href="{{ route('user.dashboard-usuario') }}" class="active">
+                                    <i class="fas fa-user"></i> Mi Cuenta
+                                </a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                            <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @endauth
+                    </ul>
               </nav>
           </div>
       </div>
@@ -52,9 +62,9 @@
       <div class="container">
           <ul>
               <li><a href="{{ route('home') }}">Inicio</a></li>
-              <li><a href="">Productos</a></li>
-              {{-- <li><a href="{{ route('productos.categoria', $producto->categorias->id_categoria) }}">{{ $producto->categorias->nombre_categoria }}</a></li>
-              <li id="breadcrumb-product-title">{{ $producto->nombre_producto }}</li> --}}
+              <li><a href="{{ route('productos.search') }}">Productos</a></li>
+              <li><a href="{{ route('productos.filtrados', ['categories[]' => $producto->categorias->id_categoria]) }}">{{ $producto->categorias->nombre_categoria }}</a></li>
+                    <li id="breadcrumb-product-title">{{ $producto->nombre_producto }}</li>
           </ul>
       </div>
   </div>
@@ -68,10 +78,26 @@
                   <div class="product-images" id="images">
                     <div class="product-main-image">
                         <img src="{{ asset('imagenes/' . $producto->url_imagen) }}" alt="{{ $producto->nombre_producto }}" id="main-image">
+                        <button id="reset-image-btn" class="mt-2 px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm">
+                            <i class="fas fa-undo-alt mr-1"></i> Restaurar imagen original
+                        </button>
                     </div>
-                    <div class="product-thumbnails" id="thumbnails">
-                      <!-- Si tienes múltiples imágenes para el producto, puedes iterarlas aquí -->
-                      <img src="{{ asset('imagenes/' . $producto->url_imagen) }}" alt="Miniatura 1" class="thumbnail">
+                    <div class="product-thumbnails flex space-x-2 mt-4" id="thumbnails">
+                        @if($producto->url_imagen1)
+                            <img src="{{ asset('imagenes/' . $producto->url_imagen1) }}" alt="Miniatura 1" 
+                                class="product-thumbnail w-20 h-20 object-cover rounded cursor-pointer border-2 hover:border-blue-500 transition-all"
+                                data-full-image="{{ asset('imagenes/' . $producto->url_imagen1) }}">
+                        @endif
+                        @if($producto->url_imagen2)
+                            <img src="{{ asset('imagenes/' . $producto->url_imagen2) }}" alt="Miniatura 2" 
+                                class="product-thumbnail w-20 h-20 object-cover rounded cursor-pointer border-2 hover:border-blue-500 transition-all"
+                                data-full-image="{{ asset('imagenes/' . $producto->url_imagen2) }}">
+                        @endif
+                        @if($producto->url_imagen3)
+                            <img src="{{ asset('imagenes/' . $producto->url_imagen3) }}" alt="Miniatura 3" 
+                                class="product-thumbnail w-20 h-20 object-cover rounded cursor-pointer border-2 hover:border-blue-500 transition-all"
+                                data-full-image="{{ asset('imagenes/' . $producto->url_imagen3) }}">
+                        @endif
                     </div>
                   </div>
                   
@@ -275,34 +301,6 @@
               }
           });
           
-          // Manejo de las miniaturas de imágenes
-          const thumbnails = document.querySelectorAll('.thumbnail');
-          const mainImage = document.getElementById('main-image');
-          
-          thumbnails.forEach(thumbnail => {
-              thumbnail.addEventListener('click', function() {
-                  mainImage.src = this.src;
-              });
-          });
-          
-          // Manejo de pestañas
-          const tabButtons = document.querySelectorAll('.tab-btn');
-          
-          tabButtons.forEach(button => {
-              button.addEventListener('click', function() {
-                  // Remover clase active de todos los botones y paneles
-                  tabButtons.forEach(btn => btn.classList.remove('active'));
-                  document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-                  
-                  // Agregar clase active al botón clickeado
-                  this.classList.add('active');
-                  
-                  // Mostrar el panel correspondiente
-                  const tabId = this.getAttribute('data-tab');
-                  document.getElementById(`tab-${tabId}`).classList.add('active');
-              });
-          });
-          
           // Manejo del botón "Añadir al carrito"
             const addToCartBtn = document.getElementById('btn-add-cart');
             if (addToCartBtn) {
@@ -318,6 +316,72 @@
                     form.querySelector('input[name="cantidad"]').value = quantityInput.value;
                 });
             }
+
+          // Manejo mejorado de las miniaturas de imágenes
+        const thumbnails = document.querySelectorAll('.product-thumbnail');
+        const mainImage = document.getElementById('main-image');
+        
+        // Función para verificar si una imagen existe
+        function checkImageExists(url, callback) {
+            const img = new Image();
+            img.onload = function() { callback(true); };
+            img.onerror = function() { callback(false); };
+            img.src = url;
+        }
+        
+        // Procesar cada miniatura
+        thumbnails.forEach(thumbnail => {
+            // Verificar si la imagen existe realmente
+            checkImageExists(thumbnail.src, function(exists) {
+                if (!exists) {
+                    thumbnail.style.display = 'none';
+                }
+            });
+            
+            // Configurar el evento click
+            thumbnail.addEventListener('click', function() {
+                const fullImageUrl = this.getAttribute('data-full-image');
+                if (fullImageUrl) {
+                    mainImage.src = fullImageUrl;
+                    
+                    // Resaltar la miniatura seleccionada
+                    thumbnails.forEach(t => {
+                        t.classList.remove('border-blue-500', 'border-2');
+                        t.classList.add('border-transparent');
+                    });
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-blue-500', 'border-2');
+                }
+            });
+        });
+        
+        // Resaltar la primera miniatura visible al cargar
+        setTimeout(() => {
+            const firstVisibleThumbnail = Array.from(thumbnails).find(t => 
+                t.style.display !== 'none' && 
+                window.getComputedStyle(t).display !== 'none'
+            );
+            
+            if (firstVisibleThumbnail) {
+                firstVisibleThumbnail.classList.remove('border-transparent');
+                firstVisibleThumbnail.classList.add('border-blue-500', 'border-2');
+            }
+        }, 100);
+        //RESTAURAR IMAGEN ORIGINAL
+        const resetImageBtn = document.getElementById('reset-image-btn');
+        const originalImageUrl = "{{ asset('imagenes/' . $producto->url_imagen) }}";
+
+        if (resetImageBtn) {
+            resetImageBtn.addEventListener('click', function() {
+                mainImage.src = originalImageUrl;
+                
+                // Quitar el resaltado de todas las miniaturas
+                thumbnails.forEach(t => {
+                    t.classList.remove('border-blue-500', 'border-2');
+                    t.classList.add('border-transparent');
+                });
+            });
+        }
         });
   </script>
 </body>

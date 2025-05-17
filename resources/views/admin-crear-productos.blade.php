@@ -71,8 +71,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="imagen" class="form-label">Imagen del producto:</label>
+                    <label for="imagen" class="form-label">Imagen 1 (Principal) del producto:</label>
                     <input type="file" id="imagen" name="imagen" class="form-file" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen1" class="form-label">Imagen 2 del producto (Opcional):</label>
+                    <input type="file" id="imagen1" name="imagen1" class="form-file" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen2" class="form-label">Imagen 3 del producto (Opcional):</label>
+                    <input type="file" id="imagen2" name="imagen2" class="form-file" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen3" class="form-label">Imagen 4 del producto (Opcional):</label>
+                    <input type="file" id="imagen3" name="imagen3" class="form-file" accept="image/*">
                 </div>
 
                 <div class="form-group">

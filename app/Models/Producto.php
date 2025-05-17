@@ -13,6 +13,9 @@ class Producto extends Model
         "descripcion",
         "estado",
         "url_imagen",
+        "url_imagen1",
+        "url_imagen2",
+        "url_imagen3",
         "stock",
         "precio",
         "id_categoria"

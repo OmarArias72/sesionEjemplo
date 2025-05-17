@@ -111,18 +111,57 @@
                 </div>
             
                 <div class="form-group">
-                    <label for="imagen" class="form-label">Imagen del producto:</label>
+                    <label for="imagen" class="form-label">Imagen del producto (Principal):</label>
                     <input type="file" id="imagen" name="imagen" class="form-file" accept="image/*">
                     
                     {{-- Mostrar imagen actual si existe --}}
                     @if(isset($productoEncontrado) && $productoEncontrado->url_imagen)
                         <div class="product-thumbnail-container">
+                            <h4>Imagen Actual</h4>
                             <div class="product-thumbnail">
-                                <h4>Imagen Actual</h4>
                                 <img src="{{ asset('imagenes/' . $productoEncontrado->url_imagen) }}" alt="Imagen del producto">
                             </div>
                         </div>
                     @endif
+
+                     <div class="form-group">
+                        <label for="imagen1" class="form-label">Imagen 2 del producto (Opcional):</label>
+                        <input type="file" id="imagen1" name="imagen1" class="form-file" accept="image/*">
+                        @if(isset($productoEncontrado) && $productoEncontrado->url_imagen1)
+                        <div class="product-thumbnail-container">
+                            <h4>Imagen Actual</h4>
+                            <div class="product-thumbnail">
+                                <img src="{{ asset('imagenes/' . $productoEncontrado->url_imagen1) }}" alt="Imagen del producto">
+                            </div>
+                        </div>
+                    @endif
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imagen2" class="form-label">Imagen 3 del producto (Opcional):</label>
+                        <input type="file" id="imagen2" name="imagen2" class="form-file" accept="image/*">
+                        @if(isset($productoEncontrado) && $productoEncontrado->url_imagen2)
+                        <div class="product-thumbnail-container">
+                                <h4>Imagen Actual</h4>
+                                <div class="product-thumbnail">
+                                    <img src="{{ asset('imagenes/' . $productoEncontrado->url_imagen2) }}" alt="Imagen del producto">
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imagen3" class="form-label">Imagen 4 del producto (Opcional):</label>
+                        <input type="file" id="imagen3" name="imagen3" class="form-file" accept="image/*">
+                        @if(isset($productoEncontrado) && $productoEncontrado->url_imagen3)
+                            <div class="product-thumbnail-container">
+                                <h4>Imagen Actual</h4>
+                                <div class="product-thumbnail">
+                                    <img src="{{ asset('imagenes/' . $productoEncontrado->url_imagen3) }}" alt="Imagen del producto">
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             
                 <div class="form-group">

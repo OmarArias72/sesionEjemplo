@@ -82,4 +82,21 @@ class User extends Authenticatable
     {
         return $this->getKey(); // Esto devuelve el id_usuario
     }
+
+    // Obtener el carrito activo del usuario
+    public function carritoActivoProductosCount()
+    {
+        // Obtener el carrito activo del usuario
+        $carrito = $this->carrito()
+                        ->where('estado', 'activo')
+                        ->first();
+        
+        // Si no hay carrito activo, retornar 0
+        if (!$carrito) {
+            return 0;
+        }
+        
+        // Retornar la suma de las cantidades de todos los productos en el carrito
+        return $carrito->carritoProductos()->sum('cantidad');
+    }
 }

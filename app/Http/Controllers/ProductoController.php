@@ -40,7 +40,7 @@ class ProductoController extends Controller
             return back()->withErrors('error', 'Producto no encontrado');
         }
         
-        Log::info("Producto encontrado",["Nombre"=>$productoEncontrado->nombre_producto]);
+        //Log::info("Producto encontrado",["Nombre"=>$productoEncontrado->nombre_producto]);
         // Obtener todas las categorías para llenar el select
         $categorias = Categoria::all();
         return view("admin-editar-producto",compact("productoEncontrado","productos","categorias"));
@@ -74,14 +74,17 @@ class ProductoController extends Controller
             "precio" => 'required|numeric|min:0',
             "id_categoria" => 'required|integer|exists:categorias,id_categoria',
             "estado" => 'required|in:activo,inactivo',
-            "imagen" => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
+            "imagen" => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            "imagen1" => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            "imagen2" => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            "imagen3" => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
         ]);
         // Obtener configuración de IVA (asumiendo que se identifica por tener valor en iva)
         $ivaConfig = Configuracion::whereNotNull('iva')->first();
         $precioBase=$request->precio;
         $precioConIVA=0;
-        $IVA=$ivaConfig->iva;
         if($ivaConfig){
+             $IVA=round($ivaConfig->iva, 4);
              $precioConIVA = round(($precioBase * $IVA) + $precioBase, 2); 
             
         }else{
@@ -91,8 +94,31 @@ class ProductoController extends Controller
 
         if ($request->hasFile('imagen')) {
             $archivo = $request->file('imagen');
-            $nombreImagen = time() . '_' . $archivo->getClientOriginalName();
+            $nombreImagen = time() . '_1_' . $archivo->getClientOriginalName();
             $archivo->move(public_path('imagenes'), $nombreImagen);
+        }
+
+         // Procesar imágenes adicionales
+        $nombreImagen1 = null;
+        $nombreImagen2 = null;
+        $nombreImagen3 = null;
+
+        if ($request->hasFile('imagen1')) {
+            $archivo1 = $request->file('imagen1');
+            $nombreImagen1 = time() . '_2_' . $archivo1->getClientOriginalName();
+            $archivo1->move(public_path('imagenes'), $nombreImagen1);
+        }
+
+        if ($request->hasFile('imagen2')) {
+            $archivo2 = $request->file('imagen2');
+            $nombreImagen2 = time() . '_3_' . $archivo2->getClientOriginalName();
+            $archivo2->move(public_path('imagenes'), $nombreImagen2);
+        }
+
+        if ($request->hasFile('imagen3')) {
+            $archivo3 = $request->file('imagen3');
+            $nombreImagen3 = time() . '_4_' . $archivo3->getClientOriginalName();
+            $archivo3->move(public_path('imagenes'), $nombreImagen3);
         }
 
         Producto::create([
@@ -100,6 +126,9 @@ class ProductoController extends Controller
             'descripcion' => $request->descripcion,
             'estado' => $request->estado,
             'url_imagen' => $nombreImagen,
+            'url_imagen1' => $nombreImagen1,
+            'url_imagen2' => $nombreImagen2,
+            'url_imagen3' => $nombreImagen3,
             'stock' => $request->stock,
             'precio' => $precioConIVA,
             'id_categoria' => $request->id_categoria
@@ -119,6 +148,9 @@ class ProductoController extends Controller
             'precio' => 'required|numeric|min:0',
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // Opcional
+            "imagen1" => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            "imagen2" => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            "imagen3" => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
         ]);
 
         if ($validator->fails()) {
@@ -133,8 +165,9 @@ class ProductoController extends Controller
             $ivaConfig = Configuracion::whereNotNull('iva')->first();
             $precioConIVA=0;
             $precioBase=$request->input('precio');
-            $IVA=round($ivaConfig->iva, 4);
+           
             if($ivaConfig){
+                $IVA=round($ivaConfig->iva, 4);
                 $precioConIVA = round(($precioBase * $IVA) + $precioBase, 2); 
             }else{
                 $precioConIVA=$precioBase;
@@ -153,11 +186,42 @@ class ProductoController extends Controller
             if ($request->hasFile('imagen')) {
                 $archivo = $request->file('imagen');
                 if ($archivo->isValid()) {
-                    $nombreImagen = time() . '_' . $archivo->getClientOriginalName();
+                    $nombreImagen = time() . '_1_' . $archivo->getClientOriginalName();
                     $archivo->move(public_path('imagenes'), $nombreImagen);
                     $data['url_imagen'] = $nombreImagen;
                 }
             }
+            // Procesar imagen1
+            if ($request->hasFile('imagen1')) {
+                $archivo = $request->file('imagen1');
+                if ($archivo->isValid()) {
+                    $nombreImagen1 = time() . '_2_' . $archivo->getClientOriginalName();
+                    $archivo->move(public_path('imagenes'), $nombreImagen1);
+                    $data['url_imagen1'] = $nombreImagen1;
+                }
+            }
+
+            // Procesar imagen2
+            if ($request->hasFile('imagen2')) {
+                $archivo = $request->file('imagen2');
+                if ($archivo->isValid()) {
+                    $nombreImagen2 = time() . '_3_' . $archivo->getClientOriginalName();
+                    $archivo->move(public_path('imagenes'), $nombreImagen2);
+                    $data['url_imagen2'] = $nombreImagen2;
+                }
+            }
+
+            // Procesar imagen3
+            if ($request->hasFile('imagen3')) {
+                $archivo = $request->file('imagen3');
+                if ($archivo->isValid()) {
+                    $nombreImagen3 = time() . '_4_' . $archivo->getClientOriginalName();
+                    $archivo->move(public_path('imagenes'), $nombreImagen3);
+                    $data['url_imagen3'] = $nombreImagen3;
+                }
+            }
+
+            
 
             $producto->update($data);
 
@@ -173,6 +237,9 @@ class ProductoController extends Controller
 
     public function busquedaProducto(Request $request){
         $query = $request->input('query');
+    
+        // Obtener todas las categorías activas (puedes añadir condiciones si es necesario)
+        $categorias = Categoria::all();
         
         if ($query) {
             // Búsqueda de productos
@@ -188,7 +255,49 @@ class ProductoController extends Controller
                 ->paginate(12);
         }
         
-        return view('productos', compact('productos', 'query'));
+        return view('productos', compact('productos', 'query', 'categorias'));
+    }
+
+    public function buscarProductosFiltros(Request $request){
+        $query = $request->input('query');
+        $categories = $request->input('categories', []);
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+        
+        // Obtener todas las categorías para el filtro
+        $categorias = Categoria::all();
+        
+        // Consulta base
+        $productosQuery = Producto::where('estado', 'activo')
+            ->with('categorias');
+        
+        // Aplicar búsqueda de texto si existe
+        if ($query) {
+            $productosQuery->where(function($q) use ($query) {
+                $q->where('nombre_producto', 'LIKE', "%{$query}%")
+                ->orWhere('descripcion', 'LIKE', "%{$query}%");
+            });
+        }
+        
+        // Aplicar filtro de categorías si se seleccionaron (y no está marcado "Todas")
+        if (!empty($categories) && !$request->has('category_all')) {
+            $productosQuery->whereIn('id_categoria', $categories);
+        }
+        
+        // Aplicar filtro de precio mínimo
+        if ($minPrice) {
+            $productosQuery->where('precio', '>=', $minPrice);
+        }
+        
+        // Aplicar filtro de precio máximo
+        if ($maxPrice) {
+            $productosQuery->where('precio', '<=', $maxPrice);
+        }
+        
+        // Paginar resultados
+        $productos = $productosQuery->paginate(12);
+        
+        return view('productos', compact('productos', 'query', 'categorias'));
     }
 
     public function mostrarDetallesProducto($id)

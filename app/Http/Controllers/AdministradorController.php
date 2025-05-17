@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Configuracion;
 use App\Models\Empresa;
+use App\Models\NumeroPedido;
 use App\Models\Pago;
 use App\Models\Pedido;
+use App\Models\PedidoReciente;
 use App\Models\Producto;
+use App\Models\ProductoStockBajo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -14,7 +17,11 @@ use Illuminate\Support\Facades\Validator;
 class AdministradorController extends Controller
 {
     public function getViewDashboard(){
-        return view("admin-dashboard");
+        return view("admin-dashboard",[
+            'totalPedidos' => NumeroPedido::first()->total_pedidos ?? 0,
+            'pedidosRecientes' => PedidoReciente::all(),
+            'productosBajoStock' => ProductoStockBajo::all()
+        ]);
     }
 
     public function getViewProductos(){
@@ -63,7 +70,12 @@ class AdministradorController extends Controller
     }
 
     public function getPedidos(){
-        return view("admin-pedidos");
+        // Obtener todos los pedidos con paginación
+        $pedidos = Pedido::with(['usuario', 'detalles', 'pago'])
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(8);
+
+        return view("admin-pedidos",compact('pedidos'));
     }
     public function getViewConfiguracion(){
         // Obtener configuración de PayPal (asumiendo que se identifica por tener correo)

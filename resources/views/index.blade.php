@@ -25,14 +25,14 @@
                     <ul>
                         
                         @auth
-                        <li><a href="{{route('user.carrito.ver')}}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                        <li><a href="{{route('user.carrito.ver')}}"><i class="fas fa-shopping-cart"></i> Carrito (@auth{{ auth()->user()->carritoActivoProductosCount() }}@else 0 @endauth)</a></li>
                             <li>
                                 <a href="{{ route('user.dashboard-usuario') }}" class="active">
                                     <i class="fas fa-user"></i> Mi Cuenta
                                 </a>
                             </li>
                         @else
-                            <li><a href=""><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                            <li><a href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
                             <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
                         @endauth
                     </ul>

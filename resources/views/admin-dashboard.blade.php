@@ -97,17 +97,9 @@
                 <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>Ventas Totales</h3>
+                         <h3>Pedidos Totales</h3>
                         <div class="stat-value">
-                            <p>$12,345.67</p>
-                            <span class="stat-change positive">+12.5%</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Pedidos</h3>
-                        <div class="stat-value">
-                            <p>156</p>
-                            <span class="stat-change positive">+8.2%</span>
+                            <p>{{ $totalPedidos ?? 0 }}</p>
                         </div>
                     </div>
                     
@@ -121,7 +113,7 @@
                         </div>
                         <div class="card-content">
                             <table class="admin-table">
-                                <thead>
+                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Cliente</th>
@@ -131,56 +123,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="order-id">#ORD-5289</td>
-                                        <td>Juan Pérez</td>
-                                        <td>19 Mar 2025</td>
-                                        <td><span class="status-badge completed">Completado</span></td>
-                                        <td>$129.99</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="order-id">#ORD-5288</td>
-                                        <td>María García</td>
-                                        <td>18 Mar 2025</td>
-                                        <td><span class="status-badge processing">Procesando</span></td>
-                                        <td>$89.99</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="order-id">#ORD-5287</td>
-                                        <td>Carlos López</td>
-                                        <td>18 Mar 2025</td>
-                                        <td><span class="status-badge shipped">Enviado</span></td>
-                                        <td>$199.99</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="order-id">#ORD-5286</td>
-                                        <td>Ana Martínez</td>
-                                        <td>17 Mar 2025</td>
-                                        <td><span class="status-badge pending">Pendiente</span></td>
-                                        <td>$59.99</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="order-id">#ORD-5285</td>
-                                        <td>Roberto Sánchez</td>
-                                        <td>17 Mar 2025</td>
-                                        <td><span class="status-badge completed">Completado</span></td>
-                                        <td>$149.99</td>
-                                    </tr>
+                                   @forelse($pedidosRecientes as $pedido) <!-- Usar la variable pasada desde el controlador -->
+                                        <tr>
+                                            <td class="order-id">#ORD-{{ $pedido->id_pedido }}</td>
+                                            <td>{{ $pedido->cliente }}</td>
+                                            <td>{{ $pedido->formatted_date }}</td>
+                                            <td>
+                                                <span class="status-badge {{ $pedido->estado }}">
+                                                    {{ ucfirst($pedido->estado) }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $pedido->formatted_total }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center">No hay pedidos recientes</td>
+                                        </tr>
+                                        @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-footer">
-                            <a href="admin-pedidos.html" class="view-all">Ver todos los pedidos →</a>
+                            <a href="{{route('admin.pedidos')}}" class="view-all">Ver todos los pedidos →</a>
                         </div>
                     </div>
                     
                     <!-- Products -->
                     <div class="dashboard-card">
                         <div class="card-header">
-                            <h2>Productos</h2>
-                            <button class="btn btn-small">
-                                <i class="fas fa-plus"></i> Añadir Producto
-                            </button>
+                             <h2>Productos con bajo stock</h2>
+                            <a href="{{ route('admin.productos') }}" class="btn btn-small">
+                                <i class="fas fa-plus"></i> Gestionar Productos
+                            </a>
                         </div>
                         <div class="card-content">
                             <table class="admin-table">
@@ -194,77 +168,46 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Smartphone XYZ Pro Max</td>
-                                        <td><span class="stock-badge high">15</span></td>
-                                        <td>$899.99</td>
-                                        <td>Electrónica</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn-icon delete"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Laptop Pro</td>
-                                        <td><span class="stock-badge medium">8</span></td>
-                                        <td>$1299.99</td>
-                                        <td>Electrónica</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn-icon delete"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Auriculares Inalámbricos</td>
-                                        <td><span class="stock-badge high">23</span></td>
-                                        <td>$89.99</td>
-                                        <td>Electrónica</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn-icon delete"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Smartwatch</td>
-                                        <td><span class="stock-badge high">12</span></td>
-                                        <td>$199.99</td>
-                                        <td>Electrónica</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn-icon delete"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Camiseta Premium</td>
-                                        <td><span class="stock-badge high">45</span></td>
-                                        <td>$29.99</td>
-                                        <td>Ropa</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                                <button class="btn-icon delete"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @forelse($productosBajoStock as $producto) <!-- Usar la variable pasada desde el controlador -->
+                                        <tr>
+                                            <td>{{ $producto->nombre_producto }}</td>
+                                            <td>
+                                                <span class="stock-badge {{ $producto->stock_status }}">
+                                                    {{ $producto->stock }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $producto->formatted_price }}</td>
+                                            <td>{{ $producto->categoria ?? 'Sin categoría' }}</td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a href="{{ route('admin.editar-producto') }}" class="btn-icon edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    {{-- <form action="{{ route('admin.productos.eliminar', $producto->id_producto) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn-icon delete" onclick="return confirm('¿Estás seguro?')">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form> --}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center">No hay productos con bajo stock</td>
+                                        </tr>
+                                        @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-footer">
-                            <a href="admin-productos.html" class="view-all">Ver todos los productos →</a>
+                            <a href="{{route('admin.productos')}}" class="view-all">Ver todos los productos →</a>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
-        <!--FORMULARIO PARA CERRAR SESION -->
         
     </div>
     

@@ -49,8 +49,8 @@ class AuthenticatedSessionController extends Controller
         if($user->rol->tipo_rol=="administrador"){
             return redirect()->route('admin.dashboard-admin');
         }
-        Log::info("Redirigiendo a user.dashboard");
-        return redirect()->route('user.dashboard-usuario');
+        //Log::info("Redirigiendo a user.dashboard");
+        return redirect()->route('home');
     }
 
     /**

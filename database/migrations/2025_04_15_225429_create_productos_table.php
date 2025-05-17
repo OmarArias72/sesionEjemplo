@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('descripcion',255);
             $table->string('estado',255);
             $table->string('url_imagen',255);
+            $table->string('url_imagen1',255)->nullable();
+            $table->string('url_imagen2',255)->nullable();
+            $table->string('url_imagen3',255)->nullable();
             $table->integer('stock');
             $table->decimal('precio',8,2);
             $table->timestamps();

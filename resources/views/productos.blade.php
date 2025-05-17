@@ -23,8 +23,18 @@
         </div>
         <nav class="nav-menu">
           <ul>
-            <li><a href="carrito.html"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
-            <li><a href="login.html"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        
+                        @auth
+                        <li><a href="{{route('user.carrito.ver')}}"><i class="fas fa-shopping-cart"></i> Carrito (@auth{{ auth()->user()->carritoActivoProductosCount() }}@else 0 @endauth)</a></li>
+                            <li>
+                                <a href="{{ route('user.dashboard-usuario') }}" class="active">
+                                    <i class="fas fa-user"></i> Mi Cuenta
+                                </a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                            <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @endauth
           </ul>
         </nav>
       </div>
@@ -34,7 +44,7 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="container">
-      <h1 class="page-title">Catálogo de Productos (Electrónica)</h1>
+      <h1 class="page-title">Catálogo de Productos</h1>
       <div class="products-layout">
         <!-- Sidebar Filters -->
         <aside class="sidebar">
@@ -44,55 +54,44 @@
               <i class="fas fa-filter"></i>
             </div>
             <!-- Filtro de subcategorías -->
-            <div class="filter-group">
-              <h3>Categorías</h3>
-              <div class="filter-options">
-                <div class="filter-option">
-                  <input type="checkbox" id="category-all" checked>
-                  <label for="category-all">Todas</label>
+            <form id="filter-form" action="{{ route('productos.filtrados') }}" method="GET">
+                <input type="hidden" name="query" value="{{ $query }}">
+                
+                <div class="filter-group">
+                    <h3>Categorías</h3>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <input type="checkbox" id="category-all" name="category_all" 
+                                  {{ empty(request('categories')) ? 'checked' : '' }}>
+                            <label for="category-all">Todas</label>
+                        </div>
+                        @foreach($categorias as $categoria)
+                        <div class="filter-option">
+                            <input type="checkbox" id="category-{{ $categoria->id_categoria }}" 
+                                  class="category-filter" name="categories[]" 
+                                  value="{{ $categoria->id_categoria }}"
+                                  {{ in_array($categoria->id_categoria, request('categories', [])) ? 'checked' : '' }}>
+                            <label for="category-{{ $categoria->id_categoria }}">{{ $categoria->nombre_categoria }}</label>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-smartphones" class="subcategory-filter" value="smartphones">
-                  <label for="subcategory-smartphones">Smartphones</label>
+                
+                <!-- Filtro de Precio -->
+                <div class="filter-group">
+                    <h3>Precio</h3>
+                    <div class="price-range">
+                        <input type="number" name="min_price" placeholder="Min" class="price-input" 
+                              value="{{ request('min_price') }}">
+                        <span>-</span>
+                        <input type="number" name="max_price" placeholder="Max" class="price-input"
+                              value="{{ request('max_price') }}">
+                    </div>
+                    <button type="submit" class="btn btn-filter">Aplicar</button>
                 </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-laptops" class="subcategory-filter" value="laptops">    
-                  <label for="subcategory-laptops">Laptops</label>
-                </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-tablets" class="subcategory-filter" value="tablets">
-                  <label for="subcategory-tablets">Tablets</label>
-                </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-televisores" class="subcategory-filter" value="televisores">
-                  <label for="subcategory-televisores">Televisores</label>
-                </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-camaras" class="subcategory-filter" value="camaras">
-                  <label for="subcategory-camaras">Cámaras</label>
-                </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-audio" class="subcategory-filter" value="audio">
-                  <label for="subcategory-audio">Audio</label>
-                </div>
-                <div class="filter-option">
-                  <input type="checkbox" id="subcategory-accesorios" class="subcategory-filter" value="accesorios">
-                  <label for="subcategory-accesorios">Accesorios</label>
-                </div>
-              </div>
-            </div>
-            <!-- Filtro de Precio -->
-            <div class="filter-group">
-              <h3>Precio</h3>
-              <div class="price-range">
-                <input type="number" placeholder="Min" class="price-input">
-                <span>-</span>
-                <input type="number" placeholder="Max" class="price-input">
-              </div>
-              <button class="btn btn-filter" id="btn-price-filter">Aplicar</button>
-            </div>
+            </form>
             <!-- Filtro de Valoración -->
-            <div class="filter-group">
+            {{-- <div class="filter-group">
               <h3>Valoración</h3>
               <div class="filter-options">
                 <div class="filter-option">
@@ -116,7 +115,7 @@
                   <label for="rating-1">1 estrella o más</label>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
         </aside>
         
@@ -212,6 +211,46 @@
   </footer>
   
 
-  <script></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('filter-form');
+        const categoryAll = document.getElementById('category-all');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        
+        // Manejar el checkbox "Todas"
+        categoryAll.addEventListener('change', function() {
+            if (this.checked) {
+                categoryFilters.forEach(filter => {
+                    filter.checked = false;
+                });
+            }
+        });
+        
+        // Manejar cuando se selecciona una categoría específica
+        categoryFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                if (this.checked) {
+                    categoryAll.checked = false;
+                }
+                
+                // Verificar si no hay categorías seleccionadas
+                const anyChecked = Array.from(categoryFilters).some(f => f.checked);
+                if (!anyChecked) {
+                    categoryAll.checked = true;
+                }
+            });
+        });
+        
+        // Manejar el envío del formulario
+        form.addEventListener('submit', function(e) {
+            // Si "Todas" está marcada, asegurarse de que no se envíen categorías
+            if (categoryAll.checked) {
+                document.querySelectorAll('input[name="categories[]"]').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+        });
+    });
+  </script>
 </body>
 </html>

@@ -16,24 +16,26 @@
     <header class="header">
       <div class="container">
         <div class="header-content">
-          <a href="index.html" class="logo">TiendaOnline</a>
+          <a href="{{route('home')}}" class="logo">TiendaOnline</a>
           <div class="search-bar">
             <input type="text" placeholder="Buscar productos..." />
             <button type="submit"><i class="fas fa-search"></i></button>
           </div>
           <nav class="nav-menu">
             <ul>
-              <li>
-                <a href="carrito.html"
-                  ><i class="fas fa-shopping-cart"></i> Carrito (0)</a
-                >
-              </li>
-              <li>
-                <a href="perfil-usuario.html" class="active"
-                  ><i class="fas fa-user"></i> Mi Cuenta</a
-                >
-              </li>
-            </ul>
+                        
+                        @auth
+                        <li><a href="{{route('user.carrito.ver')}}"><i class="fas fa-shopping-cart"></i> Carrito (@auth{{ auth()->user()->carritoActivoProductosCount() }}@else 0 @endauth)</a></li>
+                            <li>
+                                <a href="{{ route('user.dashboard-usuario') }}" class="active">
+                                    <i class="fas fa-user"></i> Mi Cuenta
+                                </a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                            <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @endauth
+                    </ul>
           </nav>
         </div>
       </div>

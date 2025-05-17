@@ -114,6 +114,7 @@ Route::middleware(['auth','role:usuario_estandar'])
 //RUTAS PARA VER PRODUCTOS
 // Ruta para la búsqueda y listado de productos
 Route::get('/productos', [ProductoController::class, 'busquedaProducto'])->name('productos.search');
+Route::get('/productos/filtrados', [ProductoController::class, 'buscarProductosFiltros'])->name('productos.filtrados');
 
 // Ruta para ver detalles de un producto
 Route::get('/productos/{id}', [ProductoController::class, 'mostrarDetallesProducto'])->name('productos.show');

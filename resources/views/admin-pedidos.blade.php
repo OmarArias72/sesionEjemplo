@@ -131,101 +131,53 @@
 
           <div class="admin-card">
             <div class="card-content">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Pedido</th>
-                    <th>Cliente</th>
-                    <th>Fecha</th>
-                    <th>Productos</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Pago</th>
-                    <th>Estado del Envío</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="order-id">#ORD-5289</td>
-                    <td>Juan Pérez</td>
-                    <td>19 Mar 2025</td>
-                    <td>2 productos</td>
-                    <td>$129.99</td>
-                    <td>
-                      <span class="status-badge completed">Completado</span>
-                    </td>
-                    <td><span class="payment-status paid">Pagado</span></td>
-                    <td>
-                      <select class="shipping-status">
-                        <option value="pendiente">Pendiente</option>
-                        <option value="enviado">Enviado</option>
-                        <option value="entregado">Entregado</option>
-                      </select>
-                      <button class="btn btn-small btn-primary">
-                        Actualizar
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="order-id">#ORD-5288</td>
-                    <td>María García</td>
-                    <td>18 Mar 2025</td>
-                    <td>1 producto</td>
-                    <td>$89.99</td>
-                    <td>
-                      <span class="status-badge processing">Procesando</span>
-                    </td>
-                    <td><span class="payment-status paid">Pagado</span></td>
-                    <td>
-                      <select class="shipping-status">
-                        <option value="pendiente">Pendiente</option>
-                        <option value="enviado">Enviado</option>
-                        <option value="entregado">Entregado</option>
-                      </select>
-                      <button class="btn btn-small btn-primary">
-                        Actualizar
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="order-id">#ORD-5287</td>
-                    <td>Carlos López</td>
-                    <td>18 Mar 2025</td>
-                    <td>3 productos</td>
-                    <td>$199.99</td>
-                    <td><span class="status-badge shipped">Enviado</span></td>
-                    <td><span class="payment-status paid">Pagado</span></td>
-                    <td>
-                      <select class="shipping-status">
-                        <option value="pendiente">Pendiente</option>
-                        <option value="enviado">Enviado</option>
-                        <option value="entregado">Entregado</option>
-                      </select>
-                      <button class="btn btn-small btn-primary">
-                        Actualizar
-                      </button>
-                    </td>
-                  </tr>
-                  <!-- Más filas de pedidos pueden ser añadidas aquí -->
-                </tbody>
-              </table>
+               <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Cliente</th>
+                  <th>Fecha</th>
+                  <th>Productos</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th>Pago</th>
+                  {{-- <th>Acciones</th> --}}
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($pedidos as $pedido)
+                <tr>
+                  <td class="order-id">#ORD-{{ $pedido->id_pedido }}</td>
+                  <td>{{ $pedido->usuario->nombre }} {{ $pedido->usuario->apellido }}</td>
+                  <td>{{ $pedido->created_at->format('d M Y') }}</td>
+                  <td>{{ $pedido->detalles->count() }} productos</td>
+                  <td>${{ number_format($pedido->total, 2) }}</td>
+                  <td>
+                    <span class="status-badge {{ $pedido->estado }}">{{ ucfirst($pedido->estado) }}</span>
+                  </td>
+                  <td>
+                    <span class="payment-status {{ $pedido->pago->estado ?? 'pending' }}">
+                      {{ ucfirst($pedido->pago->estado ?? 'Pendiente') }}
+                    </span>
+                  </td>
+                  {{-- <td>
+                    <a href="{{ route('admin.pedidos.detalle', $pedido->id_pedido) }}" class="btn btn-small btn-primary">
+                      Ver Detalle
+                    </a>
+                  </td> --}}
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
             </div>
 
             <div class="admin-pagination">
-              <span class="pagination-info">Mostrando 1-8 de 32 pedidos</span>
-              <div class="pagination">
-                <button class="pagination-btn prev" disabled>Anterior</button>
-                <button class="pagination-btn active">1</button>
-                <button class="pagination-btn">2</button>
-                <button class="pagination-btn">3</button>
-                <button class="pagination-btn">4</button>
-                <button class="pagination-btn next">Siguiente</button>
-              </div>
+               {{ $pedidos->links() }}
             </div>
           </div>
         </main>
       </div>
     </div>
-    <script src="js/cerrar_sesion.js"></script>
+    <script></script>
   </body>
 </html>

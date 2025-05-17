@@ -34,8 +34,18 @@
                 
                 <nav class="nav-menu">
                     <ul>
+                        
+                        @auth
                         <li><a href="{{ route('user.carrito.ver') }}" class="active"><i class="fas fa-shopping-cart"></i> Carrito ({{ $cartItems->count() }})</a></li>
-                        <li><a href="#"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+                            <li>
+                                <a href="{{ route('user.dashboard-usuario') }}" class="active">
+                                    <i class="fas fa-user"></i> Mi Cuenta
+                                </a>
+                            </li>
+                        @else
+                            <li><a href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i> Carrito (0)</a></li>
+                            <li><a href="{{ route('login') }}"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
+                        @endauth
                     </ul>
                 </nav>
             </div>
@@ -50,7 +60,7 @@
             @if($cartItems->isEmpty())
                 <div class="empty-cart">
                     <p>Tu carrito está vacío</p>
-                    <a href="" class="btn-continue">
+                    <a href="{{ route('productos.search') }}" class="btn-continue">
                         <i class="fas fa-arrow-right"></i> Comenzar a comprar
                     </a>
                 </div>
