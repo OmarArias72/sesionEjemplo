@@ -201,4 +201,66 @@ class AdministradorController extends Controller
         return redirect()->back()->with('success', 'Empresa registrada correctamente');
     }
 
+    //METODO PARA FILTRAR PAGOS
+    public function getPagosFiltrados(Request $request)
+    {
+        // Iniciar la consulta
+        $query = Pago::with(['pedido.usuario'])
+            ->select([
+                'pagos.id_pago as id_transaccion',
+                'pagos.id_pedido',
+                'pagos.metodoPago',
+                'pagos.fechaPago',
+                'pagos.montoPagado',
+                'pagos.estado'
+            ]);
+
+        // Aplicar filtros de estado si existen
+        if ($request->has('estado') && $request->estado != 'todos') {
+            $query->where('pagos.estado', $request->estado);
+        }
+
+        // Aplicar filtros de fecha si existen
+        if ($request->has('desde') && $request->desde) {
+            $query->whereDate('pagos.fechaPago', '>=', $request->desde);
+        }
+
+        if ($request->has('hasta') && $request->hasta) {
+            $query->whereDate('pagos.fechaPago', '<=', $request->hasta);
+        }
+
+        // Validar que si hay fechas, "desde" no sea mayor que "hasta"
+        if ($request->has('desde') && $request->has('hasta') && $request->desde && $request->hasta) {
+            if ($request->desde > $request->hasta) {
+                return redirect()->route('admin.pagos')->with('error', 'La fecha "Desde" no puede ser mayor que la fecha "Hasta"');
+            }
+        }
+
+        // Ordenar y paginar
+        $pagos = $query->orderBy('pagos.fechaPago', 'desc')->paginate(8);
+
+        // Transformar los datos para la vista
+        $pagosTransformados = $pagos->getCollection()->map(function ($pago) {
+            return [
+                'id_transaccion' => $pago->id_transaccion,
+                'numero_pedido' => $pago->pedido ? '#ORD-' . $pago->pedido->id_pedido : 'N/A',
+                'nombre_cliente' => $pago->pedido && $pago->pedido->usuario 
+                    ? $pago->pedido->usuario->nombre . ' ' . $pago->pedido->usuario->apellido 
+                    : 'Cliente no disponible',
+                'metodo_pago' => $pago->metodoPago,
+                'fecha_pago' => $pago->fechaPago,
+                'monto_pagado' => $pago->montoPagado,
+                'estado' => $pago->estado
+            ];
+        });
+
+        // Reemplazar la colección en el paginador
+        $pagos->setCollection($pagosTransformados);
+
+        return view("admin-pagos", [
+            'pagos' => $pagos,
+            'filtros' => $request->only(['estado', 'desde', 'hasta'])
+        ]);
+    }
+
 }

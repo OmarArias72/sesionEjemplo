@@ -258,7 +258,8 @@ class ProductoController extends Controller
         return view('productos', compact('productos', 'query', 'categorias'));
     }
 
-    public function buscarProductosFiltros(Request $request){
+    public function buscarProductosFiltros(Request $request)
+    {
         $query = $request->input('query');
         $categories = $request->input('categories', []);
         $minPrice = $request->input('min_price');
@@ -269,7 +270,7 @@ class ProductoController extends Controller
         
         // Consulta base
         $productosQuery = Producto::where('estado', 'activo')
-            ->with('categorias');
+            ->with('categorias'); // Cambiado de 'categorias' a 'categoria' (singular)
         
         // Aplicar búsqueda de texto si existe
         if ($query) {
@@ -279,8 +280,8 @@ class ProductoController extends Controller
             });
         }
         
-        // Aplicar filtro de categorías si se seleccionaron (y no está marcado "Todas")
-        if (!empty($categories) && !$request->has('category_all')) {
+        // Aplicar filtro de categorías si se seleccionaron
+        if (!empty($categories)) {
             $productosQuery->whereIn('id_categoria', $categories);
         }
         
@@ -299,7 +300,6 @@ class ProductoController extends Controller
         
         return view('productos', compact('productos', 'query', 'categorias'));
     }
-
     public function mostrarDetallesProducto($id)
     {
         $producto = Producto::with('categorias')->findOrFail($id);

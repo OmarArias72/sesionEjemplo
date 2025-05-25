@@ -97,39 +97,39 @@
             <main class="admin-content">
                 <div class="admin-toolbar">
                     <div class="admin-filters">
-                        <select class="filter-select">
-                            <option value="">Todos los métodos</option>
-                            <option value="credit-card">Tarjeta de Crédito</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="bank-transfer">Transferencia Bancaria</option>
-                        </select>
-                        
-                        <select class="filter-select">
-                            <option value="">Todos los estados</option>
-                            <option value="completed">Completado</option>
-                            <option value="pending">Pendiente</option>
-                            <option value="failed">Fallido</option>
-                            <option value="refunded">Reembolsado</option>
-                        </select>
-                        
-                        <div class="date-filter">
-                            <label>Desde:</label>
-                            <input type="date" class="date-input">
-                        </div>
-                        
-                        <div class="date-filter">
-                            <label>Hasta:</label>
-                            <input type="date" class="date-input">
-                        </div>
-                        
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-filter"></i> Filtrar
-                        </button>
+                        <form method="GET" action="{{ route('admin.pagos-filtrar') }}">
+                            <select class="filter-select" name="estado">
+                                <option value="todos" {{ request('estado') == 'todos' || !request('estado') ? 'selected' : '' }}>Todos los estados</option>
+                                <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                <option value="COMPLETED" {{ request('estado') == 'Completado' ? 'selected' : '' }}>Completado</option>
+                            </select>
+                            
+                            <div class="date-filter">
+                                <label>Desde:</label>
+                                <input type="date" class="date-input" name="desde" value="{{ request('desde') }}">
+                            </div>
+                            
+                            <div class="date-filter">
+                                <label>Hasta:</label>
+                                <input type="date" class="date-input" name="hasta" value="{{ request('hasta') }}">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+
+                            @if(request('estado') || request('desde') || request('hasta'))
+                            <a href="{{ route('admin.pagos') }}" class="btn btn-tertiary">
+                                <i class="fas fa-times"></i> Limpiar
+                            </a>
+                            @endif
+                        </form>
                     </div>
                     
-                    <button class="btn btn-primary">
+                    {{-- <button class="btn btn-primary">
                         <i class="fas fa-file-export"></i> Exportar
-                    </button>
+                    </button> --}}
                 </div>
                 
                 <div class="admin-card">

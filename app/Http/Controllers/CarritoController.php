@@ -31,52 +31,98 @@ class CarritoController extends Controller
 
         return $carrito;
     }
-    public function agregar(Request $request){
+    // public function agregar(Request $request){
+    //     $request->validate([
+    //         'id_producto' => 'required|exists:productos,id_producto',
+    //         "cantidad"=> 'required|integer|min:1'
+    //     ]);
+    //     $producto=Producto::findOrFail($request->id_producto);
+    //     if ($producto->stock < $request->cantidad) {
+    //         return back()->with('error', 'No hay suficiente stock disponible');
+    //     }
+    //     //COMIENZO DE LA DEPURACION DE ERRORES
+    //     //$usuario = Auth::user();
+    //     //$claseUsuario = get_class($usuario);
+        
+    //     // Registramos en el log
+    //     // Log::info('Clase del usuario durante agregar al carrito:', [
+    //     //     'clase' => $claseUsuario,
+    //     //     'id_producto' => $request->id_producto,
+    //     //     'cantidad' => $request->cantidad,
+    //     //     'metodos_clase'=>get_class_methods($usuario)
+    //     // ]);
+        
+    //     // Mostramos en la respuesta (para depuración)
+    //     //dd($claseUsuario);
+        
+    //     //FINALIZACION DE LA DEPURACION
+    //     $carritoActivo=$this->obtenerCarritoActivo();
+    //     // Verificar si el producto ya está en el carrito
+    //     $itemExistente = $carritoActivo->productos()->where('carrito_productos.id_producto', $producto->id_producto)->first();
+
+    //     if ($itemExistente) {
+    //         // Actualizar cantidad
+    //         $nuevaCantidad = $itemExistente->pivot->cantidad + $request->cantidad;
+    //         $carritoActivo->productos()->updateExistingPivot($producto->id_producto, [
+    //             'cantidad' => $nuevaCantidad
+    //         ]);
+    //     } else {
+    //         // Añadir nuevo producto
+    //         $carritoActivo->productos()->attach($producto->id_producto, [
+    //             'cantidad' => $request->cantidad,
+    //             'precio_unitario' => $producto->precio
+    //         ]);
+    //     }
+
+    //     return back()->with('success', 'Producto añadido al carrito');
+    // }
+
+    public function agregar(Request $request) {
+        // Validación básica del ID del producto
         $request->validate([
-            'id_producto' => 'required|exists:productos,id_producto',
-            "cantidad"=> 'required|integer|min:1'
+            'id_producto' => 'required|exists:productos,id_producto'
         ]);
-        $producto=Producto::findOrFail($request->id_producto);
-        if ($producto->stock < $request->cantidad) {
+        
+        // Determinar la cantidad (1 por defecto si no se envía)
+        $cantidad = $request->has('cantidad') ? $request->cantidad : 1;
+        
+        // Validar que la cantidad sea válida si se envió
+        if ($request->has('cantidad')) {
+            $request->validate([
+                'cantidad' => 'integer|min:1'
+            ]);
+        }
+        
+        $producto = Producto::findOrFail($request->id_producto);
+        
+        // Verificar stock disponible
+        if ($producto->stock < $cantidad) {
             return back()->with('error', 'No hay suficiente stock disponible');
         }
-        //COMIENZO DE LA DEPURACION DE ERRORES
-        //$usuario = Auth::user();
-        //$claseUsuario = get_class($usuario);
         
-        // Registramos en el log
-        // Log::info('Clase del usuario durante agregar al carrito:', [
-        //     'clase' => $claseUsuario,
-        //     'id_producto' => $request->id_producto,
-        //     'cantidad' => $request->cantidad,
-        //     'metodos_clase'=>get_class_methods($usuario)
-        // ]);
+        $carritoActivo = $this->obtenerCarritoActivo();
         
-        // Mostramos en la respuesta (para depuración)
-        //dd($claseUsuario);
-        
-        //FINALIZACION DE LA DEPURACION
-        $carritoActivo=$this->obtenerCarritoActivo();
         // Verificar si el producto ya está en el carrito
-        $itemExistente = $carritoActivo->productos()->where('carrito_productos.id_producto', $producto->id_producto)->first();
+        $itemExistente = $carritoActivo->productos()
+            ->where('carrito_productos.id_producto', $producto->id_producto)
+            ->first();
 
         if ($itemExistente) {
             // Actualizar cantidad
-            $nuevaCantidad = $itemExistente->pivot->cantidad + $request->cantidad;
+            $nuevaCantidad = $itemExistente->pivot->cantidad + $cantidad;
             $carritoActivo->productos()->updateExistingPivot($producto->id_producto, [
                 'cantidad' => $nuevaCantidad
             ]);
         } else {
             // Añadir nuevo producto
             $carritoActivo->productos()->attach($producto->id_producto, [
-                'cantidad' => $request->cantidad,
+                'cantidad' => $cantidad,
                 'precio_unitario' => $producto->precio
             ]);
         }
 
         return back()->with('success', 'Producto añadido al carrito');
     }
-
     public function verCarrito()
     {
         // Obtener el carrito activo del usuario autenticado

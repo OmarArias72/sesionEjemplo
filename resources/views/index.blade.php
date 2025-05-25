@@ -57,16 +57,25 @@
         <div class="container">
             <h2 class="section-title">Categorías Destacadas</h2>
             <div class="categories-grid">
+                @foreach($categoriasDestacadas as $categoria)
                 <div class="category-card">
                     <div class="category-img">
-                        <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070=Electrónica" alt="Electrónica">
+                        @if($categoria->productoMasVendido)
+                            <img src="{{ asset('imagenes/' . $categoria->productoMasVendido->url_imagen )}}" alt="{{ $categoria->nombre_categoria }}">
+                        @else
+                            <img src="https://via.placeholder.com/300x200?text={{ urlencode($categoria->nombre_categoria) }}" alt="{{ $categoria->nombre_categoria }}">
+                        @endif
                     </div>
                     <div class="category-info">
-                        <h3>Electrónica</h3>
-                        <a href="productos.html" class="btn btn-primary">Ver productos</a>
+                        <h3>{{ $categoria->nombre_categoria }}</h3>
+                        <p>{{ $categoria->descripcion }}</p>
+                        <form action="{{ route('productos.filtrados') }}" method="GET" class="category-form">
+                            <input type="hidden" name="categories[]" value="{{ $categoria->id_categoria }}">
+                            <button type="submit" class="btn btn-primary">Ver productos</button>
+                        </form>
                     </div>
                 </div>
-                
+                @endforeach
             </div>
         </div>
     </section>
@@ -74,60 +83,36 @@
     <!-- Featured Products -->
     <section class="products">
         <div class="container">
-            <h2 class="section-title">Productos Destacados</h2>
+            <h2 class="section-title">Productos Más Vendidos</h2>
             <div class="products-grid">
+                @foreach($productosMasVendidos as $producto)
                 <div class="product-card">
                     <div class="product-img">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaft7wQlyBBqTNwJUoLssj9B6hM5BDGtVaew&se" alt="Smartphone XYZ">
+                        <img src="{{ asset('imagenes/' . $producto->url_imagen) }}" alt="{{ $producto->nombre_producto }}">
                     </div>
                     <div class="product-info">
-                        <h3>iPhone 15</h3>
-                        <p class="product-price">$15,999.99</p>
+                        <h3>{{ $producto->nombre_producto }}</h3>
+                        <p class="product-price">${{ number_format($producto->precio, 2) }}</p>
+                        <p>Vendidos: {{ $producto->total_vendido }}</p>
                         <div class="product-actions">
-                            <a href="producto-detalle.html?id=1" class="btn-link">Ver detalles</a>
-                            <a href="#" class="btn btn-small">Añadir</a>
+                            <a href="{{ route('productos.show', $producto->id_producto) }}" class="btn-link">Ver detalles</a>
+                            <form action="{{ route('user.carrito.agregar') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="id_producto" value="{{ $producto->id_producto }}">
+                                
+                                @auth
+                                    <button type="submit" class="btn btn-small">Añadir</button>
+                                @else
+                                    <button type="button" class="btn btn-small" disabled title="Debes iniciar sesión para añadir productos al carrito">
+                                        Añadir
+                                    </button>
+                                    <small class="text-muted d-block">Inicia sesión para comprar</small>
+                                @endauth
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div class="product-card">
-                    <div class="product-img">
-                        <img src="https://cdsassets.apple.com/live/SZLF0YNV/images/sp/111339_sp818-mbp13touch-space-select-202005.png" alt="Laptop Pro">
-                    </div>
-                    <div class="product-info">
-                        <h3>Laptop Pro</h3>
-                        <p class="product-price">$1299.99</p>
-                        <div class="product-actions">
-                            <a href="producto-detalle.html?id=14" class="btn-link">Ver detalles</a>
-                            <a href="#" class="btn btn-small">Añadir</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <div class="product-img">
-                        <img src="https://m.media-amazon.com/images/I/31zTjUDn2oL._AC_SY450_.jpg" alt="Tablets Samsung.">
-                    </div>
-                    <div class="product-info">
-                        <h3>Tablets Samsung.</h3>
-                        <p class="product-price">$3,197.55</p>
-                        <div class="product-actions">
-                            <a href="producto-detalle.html?id=19" class="btn-link">Ver detalles</a>
-                            <a href="#" class="btn btn-small">Añadir</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <div class="product-img">
-                        <img src="https://m.media-amazon.com/images/I/61Q+fn3lcJL._AC_SY450_.jpg" alt="Televisor Samsung Crystal UHD CU7095 ">
-                    </div>
-                    <div class="product-info">
-                        <h3>Televisor Samsung Crystal UHD CU7095 </h3>
-                        <p class="product-price">$27,599.99</p>
-                        <div class="product-actions">
-                            <a href="producto-detalle.html?id=27" class="btn-link">Ver detalles</a>
-                            <a href="#" class="btn btn-small">Añadir</a>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>

@@ -120,7 +120,7 @@
         </aside>
         
         <!-- Products Grid -->
-        <div class="products-container">
+        {{-- <div class="products-container">
           <div class="products-header">
             <p>Mostrando productos</p>
             <select class="sort-select">
@@ -129,7 +129,7 @@
               <option>Precio: Mayor a Menor</option>
               <option>Más Recientes</option>
             </select>
-          </div>
+          </div> --}}
           
         <!-- Products Grid -->
         <section class="category-section">
@@ -144,9 +144,15 @@
                         <h3>{{ $producto->nombre_producto }}</h3>
                         <p class="product-price">${{ number_format($producto->precio, 2) }}</p>
                         <div class="product-actions">
-                            <a href="{{ route('productos.show', $producto->id_producto) }}" class="btn-link">Ver detalles</a>
-                            <a href="#" class="btn btn-small">Añadir</a>
-                        </div>
+                          <a href="{{ route('productos.show', $producto->id_producto) }}" class="btn-link">Ver detalles</a>
+                          <form action="{{ route('user.carrito.agregar') }}" method="POST" class="inline-form" style="display: inline;">
+                              @csrf
+                              <input type="hidden" name="id_producto" value="{{ $producto->id_producto }}">
+                              <button type="submit" class="btn btn-small" {{ $producto->stock <= 0 ? 'disabled' : '' }}>
+                                  Añadir
+                              </button>
+                          </form>
+                      </div>
                     </div>
                 </div>
                 @empty

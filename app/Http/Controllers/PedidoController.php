@@ -193,16 +193,70 @@ class PedidoController extends Controller
         //dd($response);
     }
 
-    public function failed(Request $request){
+    public function updatePayment(Request $request)
+    {
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
         $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($request->token);
-        $pedido=Pedido::with(['detalles.producto'])->findOrFail(session('pedido_id'));
-        session()->forget('pedido_id');
-        return redirect()->route('user.pedidos-detalles', $pedido->id_pedido);
         
-        //dd($response);
+        if(isset($response['status']) && $response['status'] == 'COMPLETED') {
+            // Buscar el pago pendiente asociado al pedido
+            $pago = Pago::where('id_pedido', session('pedido_id'))
+                    ->where('estado', 'pendiente')
+                    ->first();
+            
+            if ($pago) {
+                // Actualizar el registro de pago existente
+                $pago->update([
+                    'montoPagado' => $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'],
+                    'metodoPago' => 'paypal',
+                    'estado' => $response['status'],
+                    'transaccion_id' => $response['id'],
+                    'fechaPago' => Carbon::now()->toDateTimeString(),
+                    'moneda' => $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code']
+                ]);
+            } else {
+                // Si no existe un pago pendiente, crear uno nuevo (por si acaso)
+                Pago::create([
+                    'montoPagado' => $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'],
+                    'metodoPago' => 'paypal',
+                    'estado' => $response['status'],
+                    'transaccion_id' => $response['id'],
+                    'fechaPago' => Carbon::now()->toDateTimeString(),
+                    'id_pedido' => session('pedido_id'),
+                    'moneda' => $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code']
+                ]);
+            }
+            
+            $pedido = Pedido::where("id_pedido", session('pedido_id'))->first();
+            $pedido->estado = 'completado';
+            $pedido->save();
+            
+            session()->forget('pedido_id');
+        }
+        
+        return redirect()->route("user.pedidos-detalles", $pedido->id_pedido);
+    }
+
+    public function failed(Request $request)
+    {
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
+        $response = $provider->capturePaymentOrder($request->token);
+        
+        // Crear registro en la tabla pagos con estado "pendiente"
+        Pago::create([
+            'estado' => 'pendiente',
+            'id_pedido' => session('pedido_id'),
+            'fechaPago' => Carbon::now()->toDateTimeString()
+        ]);
+        
+        $pedido = Pedido::with(['detalles.producto'])->findOrFail(session('pedido_id'));
+        session()->forget('pedido_id');
+        
+        return redirect()->route('user.pedidos-detalles', $pedido->id_pedido);
     }
 
     public function generarPagoNuevamente($id_pedido)
@@ -269,7 +323,7 @@ class PedidoController extends Controller
                 ],
             ],
             'application_context' => [
-                'return_url' => route('user.success'),
+                'return_url' => route('user.update-payment'),
                 'cancel_url' => route('user.cancel')
             ],
         ];
@@ -299,17 +353,59 @@ class PedidoController extends Controller
     // Cancelar un pedido pendiente
     public function cancelarPedido($id_pedido)
     {
-        $pedido = Pedido::where('estado', 'pendiente')
-                      ->findOrFail($id_pedido);
+        // Buscar el pedido pendiente
+        $pedido = Pedido::with('detalles.producto')
+                  ->where('estado', 'pendiente')
+                  ->findOrFail($id_pedido);
         
-        // Actualizar estado del pedido
-        $pedido->estado = 'Cancelado';
-        $pedido->save();
+        // Iniciar transacción para asegurar la integridad de los datos
+        DB::beginTransaction();
         
-        return redirect()->back()
-                         ->with('success', 'El pedido ha sido cancelado exitosamente.');
+        try {
+            // Actualizar estado del pedido
+            $pedido->estado = 'Cancelado';
+            $pedido->save();
+            
+            // Buscar y actualizar el pago asociado si existe
+            $pago = Pago::where('id_pedido', $id_pedido)->first();
+            
+            if ($pago) {
+                $pago->update([
+                    'estado' => 'cancelado',
+                    'fechaPago' => Carbon::now()->toDateTimeString()
+                ]);
+            } else {
+                // Crear un registro de pago cancelado si no existe
+                Pago::create([
+                    'estado' => 'cancelado',
+                    'id_pedido' => $id_pedido,
+                    'fechaPago' => Carbon::now()->toDateTimeString()
+                ]);
+            }
+            foreach ($pedido->detalles as $detalle) {
+                $producto = $detalle->producto;
+                $producto->stock += $detalle->cantidad; // Sumar la cantidad reservada
+                $producto->save();
+                
+                // Opcional: Registrar en logs la operación
+                // Log::info("Producto devuelto al stock", [
+                //     'id_producto' => $producto->id_producto,
+                //     'nombre' => $producto->nombre_producto,
+                //     'cantidad_devuelta' => $detalle->cantidad,
+                //     'nuevo_stock' => $producto->stock
+                // ]);
+            }
+            DB::commit();
+            
+            return redirect()->back()
+                            ->with('success', 'El pedido ha sido cancelado exitosamente.');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                            ->with('error', 'Ocurrió un error al cancelar el pedido: ' . $e->getMessage());
+        }
     }
-
     public function getPedidos(Request $request)
     {
         // Iniciar la consulta de pedidos

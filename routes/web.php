@@ -10,9 +10,19 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
+use App\Models\CategoriaMasDestacada;
+use App\Models\ProductoMasVendido;
 
 Route::get('/', function () {
-    return view('index');
+        // Obtener categorías destacadas con el producto más vendido de cada una
+        $categoriasDestacadas = CategoriaMasDestacada::with(['productoMasVendido' => function($query) {
+            $query->orderBy('total_vendido', 'DESC')->first();
+        }])->get();
+        
+        $productosMasVendidos = ProductoMasVendido::all();
+        
+        return view('index', compact('categoriasDestacadas', 'productosMasVendidos'));
+    //return view('index');
 })->name("home");
 
 // Route::get('/dashboard', function () {
@@ -67,6 +77,7 @@ Route::middleware(['auth', 'role:administrador'])
         //RUTAS PARA PAGOS
 
         Route::get('/pagos', [AdministradorController::class,'getViewPagos'])->name('pagos');
+        Route::get('/admin/pagos', [AdministradorController::class, 'getPagosFiltrados'])->name('pagos-filtrar');
 
         //RUTAS PARA PEDIDOS
         Route::get('/pedidos', [AdministradorController::class,'getPedidos'])->name('pedidos');
@@ -101,6 +112,7 @@ Route::middleware(['auth','role:usuario_estandar'])
         //RUTAS PARA PEDIDOS
         Route::post("/pedido/procesar",[PedidoController::class,'crearPedido'])->name("crear.pedido");
         Route::get('/pedido/estatus',[PedidoController::class,'success'])->name("success");
+        Route::get('/pedido/estatus/actualizar',[PedidoController::class,'updatePayment'])->name("update-payment");
         Route::get('/pedido/cancelado',[PedidoController::class,'failed'])->name("cancel");
         Route::get('/mis-pedidos', [UsuarioController::class, 'getMisPedidos'])->name('pedidos');
         Route::get('/pedido/detalles/{pedidoId}',[UsuarioController::class,'detallePedido'])->name("pedidos-detalles")->where('numeroPedido', '.*');
