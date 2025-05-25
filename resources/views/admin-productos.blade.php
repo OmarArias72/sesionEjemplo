@@ -109,24 +109,32 @@
                     </button>
                     
                     <div class="admin-filters">
-                        <select class="filter-select">
-                            <option value="">Todas las categorías</option>
-                            <option value="electronica">Electrónica</option>
-                            <option value="ropa">Ropa</option>
-                            <option value="hogar">Hogar</option>
-                            <option value="deportes">Deportes</option>
-                        </select>
-                        
-                        <select class="filter-select">
-                            <option value="">Estado de stock</option>
-                            <option value="in-stock">En stock</option>
-                            <option value="low-stock">Stock bajo</option>
-                            <option value="out-of-stock">Agotado</option>
-                        </select>
-                        
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-filter"></i> Filtrar
-                        </button>
+                        <form id="filter-form" onsubmit="filterProducts(event)">
+                            <select name="categoria" class="filter-select">
+                                <option value="">Todas las categorías</option>
+                                @foreach($categorias as $categoria)
+                                    <option value="{{ $categoria->id_categoria }}" {{ request('categoria') == $categoria->id_categoria ? 'selected' : '' }}>
+                                        {{ $categoria->nombre_categoria }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            
+                            <select name="stock" class="filter-select">
+                                <option value="">Estado de stock</option>
+                                <option value="in-stock" {{ request('stock') == 'in-stock' ? 'selected' : '' }}>En stock (>15)</option>
+                                <option value="low-stock" {{ request('stock') == 'low-stock' ? 'selected' : '' }}>Stock bajo (6-15)</option>
+                                <option value="critical-stock" {{ request('stock') == 'critical-stock' ? 'selected' : '' }}>Stock crítico (1-5)</option>
+                                <option value="out-of-stock" {{ request('stock') == 'out-of-stock' ? 'selected' : '' }}>Agotado (0)</option>
+                            </select>
+                            
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                            
+                            <button type="button" onclick="resetFilters()" class="btn btn-tertiary ml-2">
+                                <i class="fas fa-times"></i> Limpiar filtros
+                            </button>
+                        </form>
                     </div>
                 </div>
                 
@@ -139,21 +147,65 @@
         </div>
     </div>
     <script>
-        // Función para cargar cualquier URL en el iframe
-    function cargarEnIframe(url) {
-        const iframe = document.getElementById('admin-iframe');
-        iframe.src = url;
-    }
-
-    // Delegar el clic en botones con data-url
-    document.addEventListener('click', function (e) {
-        const boton = e.target.closest('button[data-url]');
-        if (boton) {
-            e.preventDefault();
-            const url = boton.getAttribute('data-url');
-            cargarEnIframe(url);
+       // Función para filtrar productos
+        function filterProducts(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+            
+            // Construir la URL con la ruta específica para filtrados
+            const filteredUrl = "{{ route('admin.productos.tabla.filtrados') }}" + '?' + params;
+            
+            // Cargar la URL filtrada en el iframe
+            document.getElementById('admin-iframe').src = filteredUrl;
         }
-    });
+
+        // Función para resetear los filtros
+        function resetFilters() {
+            // Resetear el formulario
+            document.getElementById('filter-form').reset();
+            
+            // Cargar la URL sin filtros (ruta normal de tabla)
+            document.getElementById('admin-iframe').src = "{{ route('admin.productos.tabla') }}";
+        }
+
+        // Función para cambiar de página (compatible con ambas rutas)
+        function changePage(page) {
+            const iframe = window.parent.document.getElementById('admin-iframe');
+            const currentUrl = new URL(iframe.src);
+            
+            // Determinar si estamos en la ruta filtrada o normal
+            const isFiltered = currentUrl.pathname.includes('filtrados');
+            
+            // Actualizar el parámetro de página
+            currentUrl.searchParams.set('page', page);
+            
+            // Si estamos viendo resultados filtrados, asegurarnos de mantener la ruta correcta
+            if (isFiltered) {
+                const basePath = "{{ route('admin.productos.tabla.filtrados') }}".split('?')[0];
+                const newUrl = basePath + '?' + currentUrl.searchParams.toString();
+                iframe.src = newUrl;
+            } else {
+                iframe.src = currentUrl.toString();
+            }
+        }
+
+        // Cargar el iframe al iniciar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar el iframe con la URL base
+            document.getElementById('admin-iframe').src = "{{ route('admin.productos.tabla') }}";
+            
+            // Delegar eventos de clic para botones con data-url
+            document.addEventListener('click', function(e) {
+                const button = e.target.closest('button[data-url]');
+                if (button) {
+                    e.preventDefault();
+                    document.getElementById('admin-iframe').src = button.getAttribute('data-url');
+                }
+            });
+        });
     </script>
 </body>
 </html>

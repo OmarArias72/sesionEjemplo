@@ -305,4 +305,37 @@ class ProductoController extends Controller
         $producto = Producto::with('categorias')->findOrFail($id);
         return view('producto-detalle', compact('producto'));
     }
+
+    public function tablaProductosFiltrados(Request $request)
+    {
+        $query = Producto::with('categorias');
+        
+        // Filtro por categoría
+        if ($request->has('categoria') && $request->categoria != '') {
+            $query->where('id_categoria', $request->categoria);
+        }
+        
+        // Filtro por stock
+        if ($request->has('stock') && $request->stock != '') {
+            switch ($request->stock) {
+                case 'in-stock':
+                    $query->where('stock', '>', 15);
+                    break;
+                case 'low-stock':
+                    $query->whereBetween('stock', [6, 15]);
+                    break;
+                case 'critical-stock':
+                    $query->whereBetween('stock', [1, 5]);
+                    break;
+                case 'out-of-stock':
+                    $query->where('stock', 0);
+                    break;
+            }
+        }
+        
+        $productos = $query->paginate(3);
+        $productos->appends($request->except('page'));
+        
+        return view('admin-productos-tabla', compact('productos'));
+    }
 }

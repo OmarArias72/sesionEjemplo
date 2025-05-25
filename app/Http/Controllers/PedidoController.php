@@ -309,4 +309,47 @@ class PedidoController extends Controller
         return redirect()->back()
                          ->with('success', 'El pedido ha sido cancelado exitosamente.');
     }
+
+    public function getPedidos(Request $request)
+    {
+        // Iniciar la consulta de pedidos
+        $query = Pedido::with(['usuario', 'detalles', 'pago'])
+                    ->orderBy('created_at', 'desc');
+
+        // Filtrar por estado si está presente
+        if ($request->has('estado') && $request->estado != 'todos') {
+            $query->where('estado', $request->estado);
+        }
+
+        // Filtrar por fechas si están presentes
+        if ($request->has('fecha_desde') && $request->fecha_desde) {
+            $query->whereDate('created_at', '>=', $request->fecha_desde);
+        }
+
+        if ($request->has('fecha_hasta') && $request->fecha_hasta) {
+            $query->whereDate('created_at', '<=', $request->fecha_hasta);
+        }
+
+        // Validar que si ambas fechas están presentes, fecha_desde sea menor o igual a fecha_hasta
+        if ($request->fecha_desde && $request->fecha_hasta) {
+            if ($request->fecha_desde > $request->fecha_hasta) {
+                return redirect()->route('admin.pedidos')
+                    ->with('error', 'La fecha "Desde" no puede ser mayor que la fecha "Hasta"');
+            }
+        }
+
+        // Paginar los resultados
+        $pedidos = $query->paginate(8);
+
+        // Mantener los parámetros de búsqueda en la paginación
+        if ($request->has('estado') || $request->has('fecha_desde') || $request->has('fecha_hasta')) {
+            $pedidos->appends([
+                'estado' => $request->estado,
+                'fecha_desde' => $request->fecha_desde,
+                'fecha_hasta' => $request->fecha_hasta
+            ]);
+        }
+
+        return view("admin-pedidos", compact('pedidos'));
+    }
 }

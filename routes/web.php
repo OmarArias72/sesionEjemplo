@@ -63,11 +63,14 @@ Route::middleware(['auth', 'role:administrador'])
 
         Route::get("/buscar/producto",[ProductoController::class,"buscarProductoEditForm"])->name("buscar-producto");
 
+        Route::get('/admin/productos/filtrados', [ProductoController::class, 'tablaProductosFiltrados'])->name('productos.tabla.filtrados');
         //RUTAS PARA PAGOS
 
         Route::get('/pagos', [AdministradorController::class,'getViewPagos'])->name('pagos');
 
+        //RUTAS PARA PEDIDOS
         Route::get('/pedidos', [AdministradorController::class,'getPedidos'])->name('pedidos');
+        Route::get('/admin/pedidos', [PedidoController::class, 'getPedidos'])->name('pedidos-filtrados');
 
         //RUTA PARA REGISTRA EMPRESA ENVIO
         Route::post("/empresa-envio/registrar",[AdministradorController::class,'storeEmpresaEnvio'])->name("empresa.store");

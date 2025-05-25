@@ -100,33 +100,40 @@
         <main class="admin-content">
           <div class="admin-toolbar">
             <div class="admin-filters">
-              <select class="filter-select">
-                <option value="">Todos los estados</option>
-                <option value="pending">Pendiente</option>
-                <option value="processing">Procesando</option>
-                <option value="shipped">Enviado</option>
-                <option value="completed">Completado</option>
-                <option value="cancelled">Cancelado</option>
-              </select>
+              <form method="GET" action="{{ route('admin.pedidos-filtrados') }}" class="flex items-center gap-4">
+                  @csrf
+                  <select name="estado" class="filter-select">
+                      <option value="todos">Todos los estados</option>
+                      <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                      <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                      <option value="completado" {{ request('estado') == 'completado' ? 'selected' : '' }}>Completado</option>
+                  </select>
 
-              <div class="date-filter">
-                <label>Desde:</label>
-                <input type="date" class="date-input" />
-              </div>
+                  <div class="date-filter">
+                      <label>Desde:</label>
+                      <input type="date" name="fecha_desde" class="date-input" value="{{ request('fecha_desde') }}" />
+                  </div>
 
-              <div class="date-filter">
-                <label>Hasta:</label>
-                <input type="date" class="date-input" />
-              </div>
+                  <div class="date-filter">
+                      <label>Hasta:</label>
+                      <input type="date" name="fecha_hasta" class="date-input" value="{{ request('fecha_hasta') }}" />
+                  </div>
 
-              <button class="btn btn-secondary">
-                <i class="fas fa-filter"></i> Filtrar
-              </button>
-            </div>
+                  <button type="submit" class="btn btn-secondary">
+                      <i class="fas fa-filter"></i> Filtrar
+                  </button>
 
-            <button class="btn btn-primary">
+                  @if(request('estado') || request('fecha_desde') || request('fecha_hasta'))
+                      <a href="{{ route('admin.pedidos') }}" class="btn btn-danger">
+                          <i class="fas fa-times"></i> Limpiar
+                      </a>
+                  @endif
+              </form>
+          </div>
+
+            {{-- <button class="btn btn-primary">
               <i class="fas fa-file-export"></i> Exportar
-            </button>
+            </button> --}}
           </div>
 
           <div class="admin-card">

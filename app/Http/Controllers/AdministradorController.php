@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
 use App\Models\Configuracion;
 use App\Models\Empresa;
 use App\Models\NumeroPedido;
@@ -25,7 +26,8 @@ class AdministradorController extends Controller
     }
 
     public function getViewProductos(){
-        return view("admin-productos");
+        $categorias = Categoria::all();
+        return view("admin-productos", compact('categorias'));
     }
     public function tablaProductos()
     {

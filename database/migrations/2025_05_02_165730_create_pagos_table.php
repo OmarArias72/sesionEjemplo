@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id('id_pago');
-            $table->decimal("montoPagado");
-            $table->string("metodoPago");
+            $table->decimal("montoPagado")->nullable();
+            $table->string("metodoPago")->nullable();
             $table->string("estado");
-            $table->string("moneda");
-            $table->string("transaccion_id");
-            $table->string("fechaPago");
+            $table->string("moneda")->nullable();
+            $table->string("transaccion_id")->nullable();
+            $table->string("fechaPago")->nullable();
             $table->timestamps();
         });
     }
