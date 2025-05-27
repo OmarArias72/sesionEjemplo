@@ -13,13 +13,15 @@ class CategoriaMasDestacada extends Model
         'id_categoria',
         'nombre_categoria',
         'descripcion',
-        'total_productos_vendidos'
+        'total_productos_vendidos',
+        'producto_destacado_id',
+        'producto_destacado_nombre',
+        'producto_destacado_imagen'
     ];
     
-    // Relación para obtener el producto más vendido de esta categoría
-    public function productoMasVendido()
+    // Accesor para obtener la URL de la imagen del producto destacado
+    public function getImagenProductoDestacadoAttribute()
     {
-        return $this->hasOne(Producto::class, 'id_categoria', 'id_categoria')
-                   ->orderBy('total_vendido', 'DESC');
+        return asset('imagenes/' . $this->producto_destacado_imagen);
     }
 }

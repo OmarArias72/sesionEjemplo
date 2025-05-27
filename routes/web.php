@@ -12,13 +12,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Models\CategoriaMasDestacada;
 use App\Models\ProductoMasVendido;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
         // Obtener categorías destacadas con el producto más vendido de cada una
-        $categoriasDestacadas = CategoriaMasDestacada::with(['productoMasVendido' => function($query) {
-            $query->orderBy('total_vendido', 'DESC')->first();
-        }])->get();
-        
+        $categoriasDestacadas = CategoriaMasDestacada::all();
+        //Log::info("Productos de categorias destacadas",["Productos"=>$categoriasDestacadas]);
         $productosMasVendidos = ProductoMasVendido::all();
         
         return view('index', compact('categoriasDestacadas', 'productosMasVendidos'));

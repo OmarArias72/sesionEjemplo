@@ -60,8 +60,8 @@
                 @foreach($categoriasDestacadas as $categoria)
                 <div class="category-card">
                     <div class="category-img">
-                        @if($categoria->productoMasVendido)
-                            <img src="{{ asset('imagenes/' . $categoria->productoMasVendido->url_imagen )}}" alt="{{ $categoria->nombre_categoria }}">
+                        @if($categoria->producto_destacado_imagen)
+                            <img src="{{ $categoria->imagen_producto_destacado }}" alt="{{ $categoria->nombre_categoria }}">
                         @else
                             <img src="https://via.placeholder.com/300x200?text={{ urlencode($categoria->nombre_categoria) }}" alt="{{ $categoria->nombre_categoria }}">
                         @endif

@@ -105,7 +105,7 @@
                   <select name="estado" class="filter-select">
                       <option value="todos">Todos los estados</option>
                       <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-                      <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                      <option value="Cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
                       <option value="completado" {{ request('estado') == 'completado' ? 'selected' : '' }}>Completado</option>
                   </select>
 
