@@ -3,114 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TiendaOnline - Administración de Productos</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>TechZone - Administración de Productos</title>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    {{-- Configuración de paleta extendida para consistencia --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a56db',
+                        'primary-dark': '#1e429f',
+                        'primary-light': '#e1effe',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="admin-body">
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                <h1 class="sidebar-logo">TiendaOnline</h1>
+<body class="bg-gray-100 font-sans antialiased text-gray-800">
+    <div class="flex min-h-screen">
+        
+        <aside class="w-64 bg-primary text-white flex flex-col fixed inset-y-0 left-0 z-20 shadow-xl">
+            <div class="p-6 border-b border-white/10">
+                <h1 class="text-2xl font-bold tracking-tight">TechZone</h1>
             </div>
             
-            <nav class="sidebar-nav">
-                <ul>
+            <nav class="flex-1 py-6">
+                <ul class="space-y-1">
                     <li>
-                        <a href="{{route('admin.dashboard-admin')}}">
-                            <i class="fas fa-chart-bar"></i>
+                        <a href="{{route('admin.dashboard-admin')}}" class="flex items-center gap-3 px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition font-medium">
+                            <i class="fas fa-chart-bar w-5 text-center"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="active">
-                        <a href="{{route('admin.productos')}}">
-                            <i class="fas fa-shopping-bag"></i>
+                    <li class="bg-white/15 border-l-4 border-white font-semibold">
+                        <a href="{{route('admin.productos')}}" class="flex items-center gap-3 px-6 py-3 text-white transition">
+                            <i class="fas fa-shopping-bag w-5 text-center"></i>
                             <span>Productos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('admin.pedidos')}}">
-                            <i class="fas fa-box"></i>
+                        <a href="{{route('admin.pedidos')}}" class="flex items-center gap-3 px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition font-medium">
+                            <i class="fas fa-box w-5 text-center"></i>
                             <span>Pedidos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('admin.envios')}}">
-                            <i class="fas fa-truck"></i>
+                        <a href="{{route('admin.envios')}}" class="flex items-center gap-3 px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition font-medium">
+                            <i class="fas fa-truck w-5 text-gray-200"></i>
                             <span>Envíos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('admin.pagos')}}">
-                            <i class="fas fa-credit-card"></i>
+                        <a href="{{route('admin.pagos')}}" class="flex items-center gap-3 px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition font-medium">
+                            <i class="fas fa-credit-card w-5 text-center"></i>
                             <span>Pagos</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('admin.configuracion')}}">
-                            <i class="fas fa-cog"></i>
+                        <a href="{{route('admin.configuracion')}}" class="flex items-center gap-3 px-6 py-3 text-white/80 hover:bg-white/10 hover:text-white transition font-medium">
+                            <i class="fas fa-cog w-5 text-center"></i>
                             <span>Configuración</span>
                         </a>
                     </li>
                 </ul>
             </nav>
             
-            {{-- <div class="sidebar-footer">
-                <a href="#" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                </a>
-            </div> --}}
-            <div class="sidebar-footer">
+            <div class="p-4 border-t border-white/10">
                 <form method="POST" action="{{ route('logout') }}" id="logout-form">
                     @csrf
-                    <a href="#" class="logout-btn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="fas fa-sign-out-alt"></i>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/80 hover:bg-red-600 hover:text-white transition font-medium cursor-pointer" 
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt w-5 text-center"></i>
                         <span>Cerrar Sesión</span>
                     </a>
                 </form>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <div class="admin-main">
-            <!-- Header -->
-            <header class="admin-header">
-                <h1>Gestión de Productos</h1>
+        <div class="flex-1 ml-64 flex flex-col min-h-screen">
+            
+            <header class="bg-white h-16 px-6 flex items-center justify-between shadow-sm border-b border-gray-200 sticky top-0 z-10">
+                <h1 class="text-xl font-bold text-gray-800">Gestión de Productos</h1>
                 
-                <div class="admin-header-actions">
-                    <div class="admin-search">
-                        <input type="text" placeholder="Buscar productos...">
-                        <i class="fas fa-search"></i>
+                <div class="flex items-center gap-6">
+                    <div class="relative flex items-center bg-gray-100 rounded-lg border border-gray-300/60 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all w-64">
+                        <input type="text" placeholder="Buscar productos..." class="w-full bg-transparent pl-9 pr-4 py-1.5 text-sm text-gray-800 outline-none placeholder-gray-400" />
+                        <i class="fas fa-search absolute left-3 text-gray-400 text-xs"></i>
                     </div>
                     
-                    <div class="admin-user">
-                        <div class="admin-avatar">A</div>
-                        <span>Admin</span>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                            A
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700 hidden sm:inline">Admin</span>
                     </div>
                 </div>
             </header>
 
-            <!-- Products Content -->
-            <main class="admin-content">
-                <div class="admin-toolbar">
-                    <button class="btn btn-primary" data-url="{{ route('admin.productos.crear') }}">
-                        <i class="fas fa-plus"></i> Añadir Producto
-                    </button>
-
-                    <button class="btn btn-primary" data-url="{{ route('admin.editar-producto') }}">
-                        <i class="fas fa-plus"></i> Editar Producto
-                    </button>
-
-                    <button class="btn btn-primary" data-url="{{ route('admin.categorias') }}">
-                        <i class="fas fa-plus"></i> Añadir categoria
-                    </button>
+            <main class="flex-1 p-6 space-y-6">
+                
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     
-                    <div class="admin-filters">
-                        <form id="filter-form" onsubmit="filterProducts(event)">
-                            <select name="categoria" class="filter-select">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button class="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition cursor-pointer" 
+                                data-url="{{ route('admin.productos.crear') }}">
+                            <i class="fas fa-plus"></i> Añadir Producto
+                        </button>
+
+                        <button class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg shadow-sm border border-gray-300/70 transition cursor-pointer" 
+                                data-url="{{ route('admin.editar-producto') }}">
+                            <i class="fas fa-edit"></i> Editar Producto
+                        </button>
+
+                        <button class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg shadow-sm border border-gray-300/70 transition cursor-pointer" 
+                                data-url="{{ route('admin.categorias') }}">
+                            <i class="fas fa-tags"></i> Añadir Categoría
+                        </button>
+                    </div>
+                    
+                    <div class="w-full lg:w-auto">
+                        <form id="filter-form" onsubmit="filterProducts(event)" class="flex flex-wrap items-center gap-3">
+                            <select name="categoria" class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition w-full sm:w-auto">
                                 <option value="">Todas las categorías</option>
                                 @foreach($categorias as $categoria)
                                     <option value="{{ $categoria->id_categoria }}" {{ request('categoria') == $categoria->id_categoria ? 'selected' : '' }}>
@@ -119,35 +136,37 @@
                                 @endforeach
                             </select>
                             
-                            <select name="stock" class="filter-select">
+                            <select name="stock" class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition w-full sm:w-auto">
                                 <option value="">Estado de stock</option>
-                                <option value="in-stock" {{ request('stock') == 'in-stock' ? 'selected' : '' }}>En stock (>15)</option>
+                                <option value="in-stock" {{ request('stock') == 'in-stock' ? 'selected' : '' }}>En stock (&gt;15)</option>
                                 <option value="low-stock" {{ request('stock') == 'low-stock' ? 'selected' : '' }}>Stock bajo (6-15)</option>
                                 <option value="critical-stock" {{ request('stock') == 'critical-stock' ? 'selected' : '' }}>Stock crítico (1-5)</option>
                                 <option value="out-of-stock" {{ request('stock') == 'out-of-stock' ? 'selected' : '' }}>Agotado (0)</option>
                             </select>
                             
-                            <button type="submit" class="btn btn-secondary">
-                                <i class="fas fa-filter"></i> Filtrar
-                            </button>
-                            
-                            <button type="button" onclick="resetFilters()" class="btn btn-tertiary ml-2">
-                                <i class="fas fa-times"></i> Limpiar filtros
-                            </button>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <button type="submit" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition cursor-pointer">
+                                    <i class="fas fa-filter"></i> Filtrar
+                                </button>
+                                
+                                <button type="button" onclick="resetFilters()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg transition cursor-pointer">
+                                    <i class="fas fa-times"></i> Limpiar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
                 
-                <div class="admin-card">
-                    <iframe id="admin-iframe" src="{{ route('admin.productos.tabla') }}">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden w-full">
+                    <iframe id="admin-iframe" src="{{ route('admin.productos.tabla') }}" class="w-full block border-none min-h-[650px] bg-white">
                         
                     </iframe>
                 </div>
             </main>
         </div>
     </div>
+
     <script>
-       // Función para filtrar productos
         function filterProducts(event) {
             event.preventDefault();
             
@@ -155,34 +174,22 @@
             const formData = new FormData(form);
             const params = new URLSearchParams(formData).toString();
             
-            // Construir la URL con la ruta específica para filtrados
             const filteredUrl = "{{ route('admin.productos.tabla.filtrados') }}" + '?' + params;
-            
-            // Cargar la URL filtrada en el iframe
             document.getElementById('admin-iframe').src = filteredUrl;
         }
 
-        // Función para resetear los filtros
         function resetFilters() {
-            // Resetear el formulario
             document.getElementById('filter-form').reset();
-            
-            // Cargar la URL sin filtros (ruta normal de tabla)
             document.getElementById('admin-iframe').src = "{{ route('admin.productos.tabla') }}";
         }
 
-        // Función para cambiar de página (compatible con ambas rutas)
         function changePage(page) {
             const iframe = window.parent.document.getElementById('admin-iframe');
             const currentUrl = new URL(iframe.src);
-            
-            // Determinar si estamos en la ruta filtrada o normal
             const isFiltered = currentUrl.pathname.includes('filtrados');
             
-            // Actualizar el parámetro de página
             currentUrl.searchParams.set('page', page);
             
-            // Si estamos viendo resultados filtrados, asegurarnos de mantener la ruta correcta
             if (isFiltered) {
                 const basePath = "{{ route('admin.productos.tabla.filtrados') }}".split('?')[0];
                 const newUrl = basePath + '?' + currentUrl.searchParams.toString();
@@ -192,12 +199,9 @@
             }
         }
 
-        // Cargar el iframe al iniciar la página
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar el iframe con la URL base
             document.getElementById('admin-iframe').src = "{{ route('admin.productos.tabla') }}";
             
-            // Delegar eventos de clic para botones con data-url
             document.addEventListener('click', function(e) {
                 const button = e.target.closest('button[data-url]');
                 if (button) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TiendaOnline - Configuración</title>
+  <title>TechZone - Configuración</title>
   <link rel="stylesheet" href="styles.css" />
   @vite('resources/css/app.css')
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -13,7 +13,7 @@
       <!-- Sidebar -->
       <aside class="admin-sidebar">
         <div class="sidebar-header">
-            <h1 class="sidebar-logo">TiendaOnline</h1>
+            <h1 class="sidebar-logo">TechZone</h1>
         </div>
         
         <nav class="sidebar-nav">
@@ -109,9 +109,9 @@
               <li class="active">
                 <a href="#general"><i class="fas fa-store"></i> General</a>
               </li>
-              <li>
+              {{-- <li>
                 <a href="#payment"><i class="fas fa-credit-card"></i> Métodos de Pago</a>
-              </li>
+              </li> --}}
               <li>
                 <a href="#shipping"><i class="fas fa-truck"></i> Envíos</a>
               </li>

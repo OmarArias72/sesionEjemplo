@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TiendaOnline - Productos</title>
+  <title>TechZone - Productos</title>
   <link rel="stylesheet" href="styles.css">
   @vite('resources/css/app.css')
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,7 +14,7 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="{{route('home')}}" class="logo">TiendaOnline</a>
+        <a href="{{route('home')}}" class="logo">TechZone</a>
         <div class="search-bar">
                     <form action="{{ route('productos.search') }}" method="GET">
                         <input type="text" name="query" placeholder="Buscar productos...">
@@ -176,7 +176,7 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-column">
-          <h3>TiendaOnline</h3>
+          <h3>TechZone</h3>
           <p>Tu tienda de confianza para compras en línea.</p>
         </div>
         <div class="footer-column">
@@ -205,13 +205,13 @@
           <address>
             <p>Calle Principal 123</p>
             <p>Ciudad, País</p>
-            <p>Email: info@tiendaonline.com</p>
+            <p>Email: info@TechZone.com</p>
             <p>Teléfono: +123 456 7890</p>
           </address>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 TiendaOnline. Todos los derechos reservados.</p>
+        <p>&copy; 2025 TechZone. Todos los derechos reservados.</p>
       </div>
     </div>
   </footer>

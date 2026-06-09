@@ -8,6 +8,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\FacturaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Models\CategoriaMasDestacada;
@@ -123,6 +124,10 @@ Route::middleware(['auth','role:usuario_estandar'])
         Route::put('/cancelar/pedido/{id_pedido}',[PedidoController::class,'cancelarPedido'])->name("cancelar-pedido");
         Route::post('/pedido/{id_pedido}/generar-pago-nuevamente', [PedidoController::class, 'generarPagoNuevamente'])->name('generar-pago-nuevamente');
 
+        //RUTA PARA DESCARGAR PDF
+        Route::get('/factura/{pedidoId}', [FacturaController::class, 'generarFactura'])
+            ->name('factura')
+            ->where('pedidoId', '[0-9]+');
     });
 
 //RUTAS PARA VER PRODUCTOS

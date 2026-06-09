@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/CarritoController.php
 
 namespace App\Http\Controllers;
 
@@ -16,7 +17,6 @@ class CarritoController extends Controller
     public function obtenerCarritoActivo(){
         
         $usuario = Auth::user();
-        //dd(get_class($usuario));
         if (!$usuario) {
             return response()->json(['error' => 'Usuario no autenticado'], 401);
         }
@@ -31,51 +31,6 @@ class CarritoController extends Controller
 
         return $carrito;
     }
-    // public function agregar(Request $request){
-    //     $request->validate([
-    //         'id_producto' => 'required|exists:productos,id_producto',
-    //         "cantidad"=> 'required|integer|min:1'
-    //     ]);
-    //     $producto=Producto::findOrFail($request->id_producto);
-    //     if ($producto->stock < $request->cantidad) {
-    //         return back()->with('error', 'No hay suficiente stock disponible');
-    //     }
-    //     //COMIENZO DE LA DEPURACION DE ERRORES
-    //     //$usuario = Auth::user();
-    //     //$claseUsuario = get_class($usuario);
-        
-    //     // Registramos en el log
-    //     // Log::info('Clase del usuario durante agregar al carrito:', [
-    //     //     'clase' => $claseUsuario,
-    //     //     'id_producto' => $request->id_producto,
-    //     //     'cantidad' => $request->cantidad,
-    //     //     'metodos_clase'=>get_class_methods($usuario)
-    //     // ]);
-        
-    //     // Mostramos en la respuesta (para depuración)
-    //     //dd($claseUsuario);
-        
-    //     //FINALIZACION DE LA DEPURACION
-    //     $carritoActivo=$this->obtenerCarritoActivo();
-    //     // Verificar si el producto ya está en el carrito
-    //     $itemExistente = $carritoActivo->productos()->where('carrito_productos.id_producto', $producto->id_producto)->first();
-
-    //     if ($itemExistente) {
-    //         // Actualizar cantidad
-    //         $nuevaCantidad = $itemExistente->pivot->cantidad + $request->cantidad;
-    //         $carritoActivo->productos()->updateExistingPivot($producto->id_producto, [
-    //             'cantidad' => $nuevaCantidad
-    //         ]);
-    //     } else {
-    //         // Añadir nuevo producto
-    //         $carritoActivo->productos()->attach($producto->id_producto, [
-    //             'cantidad' => $request->cantidad,
-    //             'precio_unitario' => $producto->precio
-    //         ]);
-    //     }
-
-    //     return back()->with('success', 'Producto añadido al carrito');
-    // }
 
     public function agregar(Request $request) {
         // Validación básica del ID del producto
@@ -114,15 +69,16 @@ class CarritoController extends Controller
                 'cantidad' => $nuevaCantidad
             ]);
         } else {
-            // Añadir nuevo producto
+            // Añadir nuevo producto (el precio ya incluye IVA desde la base de datos)
             $carritoActivo->productos()->attach($producto->id_producto, [
                 'cantidad' => $cantidad,
-                'precio_unitario' => $producto->precio
+                'precio_unitario' => $producto->precio // Este precio YA incluye IVA
             ]);
         }
 
         return back()->with('success', 'Producto añadido al carrito');
     }
+
     public function verCarrito()
     {
         // Obtener el carrito activo del usuario autenticado
@@ -130,15 +86,16 @@ class CarritoController extends Controller
         $cart = Carrito::where('id_usuario', $user->id_usuario)
                       ->where('estado', 'activo')
                       ->first();
-        $ivaConfig=0;
-        // Obtener el porcentaje de IVA de la configuración (en formato decimal, ej. 0.16)
-        $ivaConfig = Configuracion::whereNotNull('iva')->first();
-        $ivaFactor = $ivaConfig ? $ivaConfig->iva : 0.16; // Valor por defecto 0.16 si no existe
         
-       $cartItems = collect();
-        $subtotalSinIva = 0;
-        $total = 0;
-        $ivaTotal = 0;
+        // Obtener el porcentaje de IVA de la configuración
+        $ivaConfig = Configuracion::whereNotNull('iva')->first();
+        $ivaFactor = $ivaConfig ? floatval($ivaConfig->iva) : 0.16; // Valor por defecto 0.16 si no existe
+        
+        $cartItems = collect();
+        $subtotalConIva = 0;  // Subtotal con IVA incluido
+        $ivaTotal = 0;        // Monto del IVA
+        $subtotalSinIva = 0;  // Subtotal sin IVA
+        $total = 0;           // Total final (igual al subtotal con IVA + envío)
 
         if ($cart) {
             // Obtener los productos del carrito con sus relaciones
@@ -146,28 +103,38 @@ class CarritoController extends Controller
                 ->where('id_carrito', $cart->id_carrito)
                 ->get();
 
-            // Calcular total con IVA incluido (suma directa de precios)
-            $total = $cartItems->sum(function ($item) {
+            // Calcular subtotal con IVA incluido (suma directa de precios que ya incluyen IVA)
+            $subtotalConIva = $cartItems->sum(function ($item) {
                 return $item->precio_unitario * $item->cantidad;
             });
             
-            // Calcular subtotal sin IVA (extraer el IVA de los precios)
+            // Calcular el subtotal sin IVA (extrayendo el IVA del precio)
             $subtotalSinIva = $cartItems->sum(function ($item) use ($ivaFactor) {
+                // Como el precio_unitario ya incluye IVA, dividimos entre (1 + IVA)
                 $precioSinIva = $item->precio_unitario / (1 + $ivaFactor);
                 return $precioSinIva * $item->cantidad;
             });
             
-            // Calcular el monto total de IVA
-            $ivaTotal = round($total - $subtotalSinIva,2);
+            // Calcular el monto total de IVA (diferencia entre subtotal con y sin IVA)
+            $ivaTotal = round($subtotalConIva - $subtotalSinIva, 2);
+            
+            // El total final es el subtotal con IVA (más envío si aplica)
+            $total = $subtotalConIva;
         }
 
-        return view('carrito', compact('cartItems', 'subtotalSinIva', 'ivaTotal', 'total'));
+        return view('carrito', compact(
+            'cartItems', 
+            'subtotalConIva',
+            'subtotalSinIva', 
+            'ivaTotal', 
+            'total',
+            'ivaFactor'
+        ));
     }
 
     // Actualizar cantidad
     public function actualizar(Request $request, $id)
     {
-
         $item = CarritoProducto::findOrFail($id);
         $action = $request->input('action');
         $quantity = $request->input('quantity');

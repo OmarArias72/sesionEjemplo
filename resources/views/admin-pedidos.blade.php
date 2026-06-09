@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TiendaOnline - Administración de Pedidos</title>
+    <title>TechZone - Administración de Pedidos</title>
     <link rel="stylesheet" href="styles.css" />
     @vite('resources/css/app.css')
     <link
@@ -16,7 +16,7 @@
       <!-- Sidebar -->
       <aside class="admin-sidebar">
         <div class="sidebar-header">
-            <h1 class="sidebar-logo">TiendaOnline</h1>
+            <h1 class="sidebar-logo">TechZonee</h1>
         </div>
         
         <nav class="sidebar-nav">
